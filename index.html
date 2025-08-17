@@ -106,7 +106,7 @@
           <div class="head"><strong>Message</strong><span class="muted">Click examples to append</span></div>
           <div class="body">
             <div class="examples" id="examples"></div>
-            <textarea id="message" placeholder="Paste the message here..."></textarea>
+            <textarea id="message" placeholder="Paste the message here..." maxlength="500"></textarea>
             <div class="controls">
               <button id="analyzeBtn">Analyze</button>
               <button id="clearBtn" class="secondary">Clear</button>
@@ -140,7 +140,7 @@
         {
           id: 'urgent',
           label: 'Urgency / fear appeal',
-          re: /(urgent|immediately|act now|final notice|limited time|within\s+\d+\s*(minutes?|hours?))/gi,
+          re: /(urgent|immediately|act now|final notice|limited time|at risk|within\s+\d+\s*(minutes?|hours?)|jam)/gi,
           weight: 10,
           severity: 'warn',
           why: 'Creates time pressure to bypass critical thinking.'
@@ -164,7 +164,7 @@
         {
           id: 'otp',
           label: 'OTP / code request',
-          re: /(otp|one[-\s]?time\s?password|verification\s?code).*\b(reply|send|share)\b/gi,
+          re: /(?:\b(reply|send|share)\b.*(otp|OTP|code|one[-\s]?time\s?password|verification\s?code))|(?:(otp|OTP|code|one[-\s]?time\s?password|verification\s?code).*\b(reply|send|share)\b)/gi,
           weight: 20,
           severity: 'bad',
           why: 'Never share authentication codes — service providers will not ask for them.'
@@ -210,6 +210,22 @@
           why: 'Misspelled or unusual domains impersonate brands.'
         },
         {
+          id: 'unsecured-suspicious-links',
+          label: 'Unsecured suspicious links',
+          re: /http:\/\/[^\s]+/gi,
+          weight: 30,
+          severity: 'bad',
+          why: 'HTTP links asking for login/verification are extremely dangerous - no encryption protection.'
+        },
+        {
+          id: 'suspicious-links',
+          label: 'Suspicious links',
+          re: /https:\/\/[^\s]+\/(login|verify|secure|account|update|confirm)/gi,
+          weight: 25,
+          severity: 'bad',
+          why: 'Links that ask you to log in or verify are often phishing attempts.'
+        },
+        {
           id: 'credentials',
           label: 'Requests sensitive info',
           re: /(passwords?|cvv|card\s*number|bank\s*details|nric|ic\s*number|pin)\b/gi,
@@ -224,6 +240,62 @@
           weight: 10,
           severity: 'warn',
           why: 'Moving you to encrypted messaging reduces accountability.'
+        },
+        {
+          id: 'points-expiring',
+          label: 'Points expiring',
+          re: /(\d{1,3}(?:,\d{3})*)\s+points\s+expiring|redeem\s+now\s+for\s+rewards/gi,
+          weight: 8,
+          severity: 'warn',
+          why: 'Urgency to redeem points can pressure you into scams.'
+        },
+        {
+          id: 'package-delivery',
+          label: 'Package delivery issue',
+          re: /(delivery|package|driver|shipment)\s+(on\s+hold|missed|reschedule|customs\s+fee)/gi,
+          weight: 12,
+          severity: 'warn',
+          why: 'Fake delivery notices trick you into paying fees or clicking links.'
+        },
+        {
+          id: 'job-offer',
+          label: 'Job offer',
+          re: /job\s+offer|new\s+job|click\s+here\s+to\s+view\s+details/gi,
+          weight: 15,
+          severity: 'warn',
+          why: 'Unsolicited job offers often lead to scams or phishing.'
+        },
+        {
+          id: 'tax-scam',
+          label: 'Tax/government threat scam',
+          re: /(tax|taxes|income tax|government|irs|lhdn|inland revenue).*(overdue|outstanding|unpaid|violation|violated|criminal|legal action|arrest|warrant|fine|penalty).*(pay|payment|settle|complete|click|link)/gi,
+          weight: 25,
+          severity: 'bad',
+          why: 'Government agencies do not demand immediate payment via text messages or threaten arrest.'
+        },
+        {
+          id: 'allowance-scam',
+          label: 'Allowance or aid scam',
+          re: /(sumbangan\s+tunai\s+rahmah|STR|str|bantuan\s+rakyat|bsh|br1m|bantuan\s+khas\s+kewangan|BKK|bkk).*(cara\s+memohon|memohon|semak|daftar|apply)/gi,
+          weight: 18,
+          severity: 'warn',
+          why: 'Fake government aid messages trick you into sharing personal info or clicking links.'
+        },
+        {
+          id: 'bad-spacing',
+          label: 'Poor formatting/spacing',
+          re: /\b[A-Z][a-z]*:[A-Z]|[a-z]\?[A-Z]/g,
+          weight: 8,
+          severity: 'warn',
+          why: 'Poor formatting and spacing are common in automated scam messages.'
+        },
+        {
+          id: 'impersonation',
+          label: 'Impersonation scam',
+          re: /(polis|pdrm|mahkamah|kerajaan|jabatan|saman|kompaun|tindakan undang-undang|government|police|court)/gi,
+          weight: 20,
+          severity: 'bad',
+          why: 'Impersonation scams often pretend to be police/government and use urgent threats about fines, lawsuits, or saman with suspicious links.'
         }
       ];
 
@@ -232,7 +304,16 @@
         `Congratulations! You've won a $1000 gift card. To claim, click https://bit.ly/3XyzAb and provide your bank details to process the reward.`,
         `DHL: Your package is on hold. Pay the RM9.90 customs fee now to release: https://t.co/abc123.`,
         `We detected a login from a new device. Reply with your OTP code to re-activate your account immediately.`,
-        `Invest with us and GUARANTEED double your money in 7 days. Message us on WhatsApp wa.me/123456 for details.`
+        `Invest with us and GUARANTEED double your money in 7 days. Message us on WhatsApp wa.me/123456 for details.`,
+        `Malaysia Post: Sorry our driver missed you today as nobody answered. To book and reschedule, please verify the address in the link within 12 hours: https://pos-my.blog/mypost`,
+        `Dear Customer, you have 6,833 points expiring on 09/05!  Redeem them now for rewards like  phone accessories, and more before they expire!Click to view your options: https://maxis-my.best/mypoint`,
+        `Your account is at risk! Click here to verify your identity: https://secure-login-verify.com/12345. Failure to do so will result in permanent suspension.`,
+        `Job Alert: You have a new job offer! Click here to view details and confirm your interest: https://job-offer-secure.com/offer12345.`,
+        `RM 0 Maybank:TQ for using your card ending 1207 for RM3590.00 @ TOMEI. NOT you?Call Maybank 0364198764 Immediately`,
+        `Your 2024 tax is overdue and you have violated the Malaysian Criminal Code. Please complete the payment within 24 hours: https://mybayarw.cyou/my`,
+        `Terkini :Sumbangan Tunai Rahmah (STR) fasa 3-Isi rumah pendapatan kurang 2,500 ringgit, layak terima sumbangan sehingga 3,500 ringgit bergantung kepada bilangan anak. Cara memohon: http://telegram-bantuankerajaan23.my.id/viraljawatan/16`,
+        `RM0 MySejahtera: Bantuan Khas Kewangan COVID-19 sebanyak RM800 telah kredit ke TNG eWallet anda. Sila semak baki dan tuntutan anda di https://touchngo.cc`,
+        `Polis Negara teleh memberi kuasa kepada anda untuk segera menjawab saman (RM300) yang dilampirkan dalam tempoh 72 jam. Jika anda gagal menjawab, kami tidak mempunyai pilihan selain mengambil tindakan undang-undang terhadap anda. Sila jawab saman anda melalui laman web: http://polis.cyou/saman`
       ];
 
       const els = {
