@@ -214,7 +214,7 @@
           label: 'Unsecured suspicious links',
           re: /http:\/\/[^\s]+/gi,
           weight: 20,
-          severity: 'bad',
+          severity: 'warn',
           why: 'HTTP links asking for login/verification are extremely dangerous - no encryption protection.'
         },
         {
@@ -222,7 +222,7 @@
           label: 'Suspicious links',
           re: /https:\/\/[^\s]+\/(login|verify|secure|account|update|confirm)/gi,
           weight: 25,
-          severity: 'bad',
+          severity: 'warn',
           why: 'Links that ask you to log in or verify are often phishing attempts.'
         },
         {
@@ -286,7 +286,7 @@
           label: 'Poor formatting/spacing',
           re: /\b[A-Z][a-z]*:[A-Z]|[a-z]\?[A-Z]/g,
           weight: 10,
-          severity: 'warn',
+          severity: 'bad',
           why: 'Poor formatting and spacing are common in automated scam messages.'
         },
         {
