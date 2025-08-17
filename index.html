@@ -141,7 +141,7 @@
           id: 'urgent',
           label: 'Urgency / fear appeal',
           re: /(urgent|immediately|act now|final notice|limited time|at risk|within\s+\d+\s*(minutes?|hours?)|jam)/gi,
-          weight: 10,
+          weight: 20,
           severity: 'warn',
           why: 'Creates time pressure to bypass critical thinking.'
         },
@@ -149,7 +149,7 @@
           id: 'account-lock',
           label: 'Account suspension threat',
           re: /(suspended|locked|restricted)\s+(your\s+)?(account|access)/gi,
-          weight: 14,
+          weight: 20,
           severity: 'bad',
           why: 'Common ploy to push you into clicking malicious links.'
         },
@@ -173,7 +173,7 @@
           id: 'gift-reward',
           label: 'Gift / prize / reward',
           re: /(congratulations|you(?:'|\s)ve\s+won|gift\s*card|prize|reward|lottery).*(bank|details|click|link)/gi,
-          weight: 15,
+          weight: 25,
           severity: 'warn',
           why: 'Unexpected prizes that require action or payment are scams.'
         },
@@ -181,7 +181,7 @@
           id: 'crypto-returns',
           label: 'Unrealistic returns',
           re: /(double|triple)\s+(your\s+)?(money|investment)|guaranteed\s+returns?/gi,
-          weight: 16,
+          weight: 20,
           severity: 'bad',
           why: 'Promises of guaranteed high returns are hallmarks of fraud.'
         },
@@ -189,7 +189,7 @@
           id: 'pay-fee',
           label: 'Pay a fee to proceed',
           re: /(customs|processing|clearance|activation)\s+fee|pay\s+now\s+to\s+(release|receive)/gi,
-          weight: 12,
+          weight: 30,
           severity: 'warn',
           why: 'Advance-fee scams ask you to pay to unlock a benefit.'
         },
@@ -197,7 +197,7 @@
           id: 'short-url',
           label: 'Shortened URL',
           re: /https?:\/\/(bit\.ly|tinyurl\.com|t\.co|goo\.gl|is\.gd|buff\.ly|ow\.ly)\/[\w-]+/gi,
-          weight: 14,
+          weight: 15,
           severity: 'warn',
           why: 'Short links can hide the true destination.'
         },
@@ -205,7 +205,7 @@
           id: 'suspicious-domain',
           label: 'Suspicious domain',
           re: /https?:\/\/[^\s]+\b(paypai|faceb00k|rnicrosoft|amaz0n|app-?secure|login-?secure|security-?center)\.[a-z]{2,}/gi,
-          weight: 22,
+          weight: 30,
           severity: 'bad',
           why: 'Misspelled or unusual domains impersonate brands.'
         },
@@ -213,7 +213,7 @@
           id: 'unsecured-suspicious-links',
           label: 'Unsecured suspicious links',
           re: /http:\/\/[^\s]+/gi,
-          weight: 30,
+          weight: 20,
           severity: 'bad',
           why: 'HTTP links asking for login/verification are extremely dangerous - no encryption protection.'
         },
@@ -229,7 +229,7 @@
           id: 'credentials',
           label: 'Requests sensitive info',
           re: /(passwords?|cvv|card\s*number|bank\s*details|nric|ic\s*number|pin)\b/gi,
-          weight: 20,
+          weight: 30,
           severity: 'bad',
           why: 'Legitimate organizations do not ask for credentials via text.'
         },
@@ -245,7 +245,7 @@
           id: 'points-expiring',
           label: 'Points expiring',
           re: /(\d{1,3}(?:,\d{3})*)\s+points\s+expiring|redeem\s+now\s+for\s+rewards/gi,
-          weight: 8,
+          weight: 10,
           severity: 'warn',
           why: 'Urgency to redeem points can pressure you into scams.'
         },
@@ -253,7 +253,7 @@
           id: 'package-delivery',
           label: 'Package delivery issue',
           re: /(delivery|package|driver|shipment)\s+(on\s+hold|missed|reschedule|customs\s+fee)/gi,
-          weight: 12,
+          weight: 10,
           severity: 'warn',
           why: 'Fake delivery notices trick you into paying fees or clicking links.'
         },
@@ -277,15 +277,15 @@
           id: 'allowance-scam',
           label: 'Allowance or aid scam',
           re: /(sumbangan\s+tunai\s+rahmah|STR|str|bantuan\s+rakyat|bsh|br1m|bantuan\s+khas\s+kewangan|BKK|bkk).*(cara\s+memohon|memohon|semak|daftar|apply)/gi,
-          weight: 18,
-          severity: 'warn',
+          weight: 20,
+          severity: 'bad',
           why: 'Fake government aid messages trick you into sharing personal info or clicking links.'
         },
         {
           id: 'bad-spacing',
           label: 'Poor formatting/spacing',
           re: /\b[A-Z][a-z]*:[A-Z]|[a-z]\?[A-Z]/g,
-          weight: 8,
+          weight: 10,
           severity: 'warn',
           why: 'Poor formatting and spacing are common in automated scam messages.'
         },
