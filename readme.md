@@ -1,5 +1,4 @@
 Proof of Concept on how to system should works and look like
-
 Reference / Ideas:
 ```
 https://docs.virustotal.com/reference/overview
