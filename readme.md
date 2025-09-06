@@ -16,7 +16,9 @@ https://investors.fico.com/news-releases/news-release-details/fico-survey-1-4-in
 How to setup the environment:
 ```
 cd my-fastapi-app
+python -m venv venv //1 time setup
 source venv/Scripts/activate
+pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
