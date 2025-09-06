@@ -1,0 +1,86 @@
+:root {
+  --bg: #0f1220;
+  --panel: #161a2e;
+  --panel-2: #1c2240;
+  --text: #e8e9f1;
+  --muted: #a8afc1;
+  --accent: #6ca2ff;
+  --good: #2ecc71;
+  --warn: #f1c40f;
+  --bad: #e74c3c;
+  --outline: #2d3563;
+  --hl-warn-bg: rgba(241, 196, 15, 0.2);
+  --hl-bad-bg: rgba(231, 76, 60, 0.23);
+  --shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(1200px 800px at 10% -10%, #1c2240 0%, #0f1220 60%);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.45;
+}
+.container { max-width: 1200px; margin: 32px auto; padding: 0 16px; }
+header { margin-bottom: 16px; }
+h1 { font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+.sub { color: var(--muted); font-size: 13px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 16px;
+}
+@media (max-width: 980px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+.card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--outline); border-radius: 14px; box-shadow: var(--shadow); }
+.card .head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--outline); }
+.card .body { padding: 14px 16px; }
+
+.examples { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { background: #0e152f; border: 1px solid var(--outline); color: var(--text); padding: 8px 10px; border-radius: 10px; font-size: 12px; cursor: pointer; transition: border-color .15s, transform .02s; }
+.pill:hover { border-color: var(--accent); }
+.pill:active { transform: translateY(1px); }
+
+textarea {
+  width: 100%; min-height: 160px; resize: vertical; padding: 12px 12px; border-radius: 10px;
+  border: 1px solid var(--outline); background: #0e1225; color: var(--text); font-size: 14px;
+}
+textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,162,255,0.2); }
+
+.controls { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+button {
+  background: linear-gradient(180deg, #4b86ff, #3d6ee6);
+  color: #fff; border: none; border-radius: 10px; padding: 10px 14px;
+  font-weight: 600; cursor: pointer; box-shadow: 0 6px 18px rgba(76, 135, 255, .3);
+}
+button.secondary { background: transparent; border: 1px solid var(--outline); color: var(--muted); box-shadow: none; }
+button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.row { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.result {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+@media (max-width: 720px) { .result { grid-template-columns: 1fr; } }
+
+.score {
+  display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--outline);
+  border-radius: 10px; background: #0f1430;
+}
+.meter { position: relative; flex: 1; height: 10px; background: #0b0f24; border: 1px solid var(--outline); border-radius: 99px; overflow: hidden; }
+.bar { position: absolute; inset: 0 100% 0 0; background: linear-gradient(90deg, var(--good), var(--warn), var(--bad)); transition: right .5s ease; }
+.score .num { min-width: 64px; text-align: right; font-feature-settings: "tnum" on, "lnum" on; }
+
+.annotated { border: 1px dashed var(--outline); border-radius: 10px; padding: 10px; background: #0c1125; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; }
+.hl-warn { background: var(--hl-warn-bg); outline: 1px solid #c6a20c66; border-radius: 4px; padding: 0 2px; }
+.hl-bad { background: var(--hl-bad-bg); outline: 1px solid #cc564a87; border-radius: 4px; padding: 0 2px; }
+
+.explain li { margin: 8px 0; color: var(--muted); }
+.explain strong { color: var(--text); }
+
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.muted { color: var(--muted); font-size: 12px; }
