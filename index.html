@@ -360,12 +360,34 @@
           return;
         }
         setBusy(true);
-        pulseStatus('Analyzing… <span class="spinner"></span>');
-        await wait(900 + Math.random() * 500);
-        const result = analyze(text);
-        render(result);
-        setBusy(false);
-        pulseStatus('Analysis complete.');
+        pulseStatus('Analyzing with AI… <span class="spinner"></span>');
+        try {
+            const response = await fetch('http://127.0.0.1:8000/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+            }
+            
+            // // The backend returns the prediction from Vertex AI.
+            const aiData = await response.json();
+
+            render(aiData);
+            pulseStatus('Analysis complete.');
+
+        } catch (error) {
+            console.error('Analysis Error:', error.message);
+            pulseStatus('Error analyzing message. Check console for details.');
+            render({ score: 0, annotated: text, findings: [{ label: 'Error', why: error.message }] });
+        } finally {
+            setBusy(false);
+        }
       });
 
       function setBusy(b) {
@@ -375,43 +397,43 @@
       function pulseStatus(html) { els.status.innerHTML = html; }
       function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-      function analyze(text) {
-        const findings = [];
-        const ranges = [];
-        const seenById = new Map();
+      // function analyze(text) {
+      //   const findings = [];
+      //   const ranges = [];
+      //   const seenById = new Map();
 
-        for (const p of patterns) {
-          const matches = [...text.matchAll(p.re)];
-          if (matches.length) {
-            // Cap counted occurrences per pattern for scoring fairness
-            const capped = matches.slice(0, 3);
-            capped.forEach(m => {
-              const start = m.index ?? 0;
-              const end = start + m[0].length;
-              ranges.push({ start, end, severity: p.severity, id: p.id, label: p.label, why: p.why, weight: p.weight });
-            });
-            seenById.set(p.id, { label: p.label, why: p.why, severity: p.severity, count: matches.length, weight: p.weight });
-          }
-        }
+      //   for (const p of patterns) {
+      //     const matches = [...text.matchAll(p.re)];
+      //     if (matches.length) {
+      //       // Cap counted occurrences per pattern for scoring fairness
+      //       const capped = matches.slice(0, 3);
+      //       capped.forEach(m => {
+      //         const start = m.index ?? 0;
+      //         const end = start + m[0].length;
+      //         ranges.push({ start, end, severity: p.severity, id: p.id, label: p.label, why: p.why, weight: p.weight });
+      //       });
+      //       seenById.set(p.id, { label: p.label, why: p.why, severity: p.severity, count: matches.length, weight: p.weight });
+      //     }
+      //   }
 
-        // Score: sum weights with diminishing returns, clamp 0-100
-        let raw = 0;
-        for (const [id, info] of seenById) {
-          const n = Math.min(info.count, 3);
-          raw += info.weight * (n === 1 ? 1 : n === 2 ? 1.6 : 2.0);
-        }
-        const score = Math.max(0, Math.min(100, Math.round( (raw / 90) * 100 )));
+      //   // Score: sum weights with diminishing returns, clamp 0-100
+      //   let raw = 0;
+      //   for (const [id, info] of seenById) {
+      //     const n = Math.min(info.count, 3);
+      //     raw += info.weight * (n === 1 ? 1 : n === 2 ? 1.6 : 2.0);
+      //   }
+      //   const score = Math.max(0, Math.min(100, Math.round( (raw / 90) * 100 )));
 
-        const annotated = highlight(text, ranges);
+      //   const annotated = highlight(text, ranges);
 
-        // Build explanations list from seen patterns
-        for (const [id, info] of seenById) {
-          findings.push({ id, ...info });
-        }
-        findings.sort((a,b) => b.weight - a.weight);
+      //   // Build explanations list from seen patterns
+      //   for (const [id, info] of seenById) {
+      //     findings.push({ id, ...info });
+      //   }
+      //   findings.sort((a,b) => b.weight - a.weight);
 
-        return { score, annotated, findings };
-      }
+      //   return { score, annotated, findings };
+      // }
 
       function highlight(text, ranges) {
         if (!ranges.length) return escapeHtml(text);
@@ -462,6 +484,7 @@
         els.score.textContent = `Score: ${score}`;
         els.score.style.color = score > 70 ? 'var(--bad)' : score > 40 ? 'var(--warn)' : 'var(--good)';
       }
+
     </script>
   </body>
 </html>
