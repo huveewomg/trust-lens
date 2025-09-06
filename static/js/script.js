@@ -1,4 +1,4 @@
-
+// Configuration and data
 const EXAMPLES = [
   `URGENT: Your account has been suspended due to unusual activity. Verify your identity within 30 minutes at http://secure-login.paypai.com to avoid permanent restriction. Do not ignore this final notice!`,
   `Congratulations! You've won a $1000 gift card. To claim, click https://bit.ly/3XyzAb and provide your bank details to process the reward.`,
@@ -16,133 +16,167 @@ const EXAMPLES = [
   `Polis Negara teleh memberi kuasa kepada anda untuk segera menjawab saman (RM300) yang dilampirkan dalam tempoh 72 jam. Jika anda gagal menjawab, kami tidak mempunyai pilihan selain mengambil tindakan undang-undang terhadap anda. Sila jawab saman anda melalui laman web: http://polis.cyou/saman`
 ];
 
-const els = {
-  ex: document.getElementById('examples'),
-  ta: document.getElementById('message'),
-  btn: document.getElementById('analyzeBtn'),
-  clr: document.getElementById('clearBtn'),
-  status: document.getElementById('status'),
-  bar: document.getElementById('bar'),
-  score: document.getElementById('score'),
-  annotated: document.getElementById('annotated'),
-  explain: document.getElementById('explain'),
+// DOM element references
+const elements = {
+  examplesContainer: document.getElementById('examples'),
+  messageTextarea: document.getElementById('message'),
+  analyzeButton: document.getElementById('analyzeBtn'),
+  clearButton: document.getElementById('clearBtn'),
+  statusElement: document.getElementById('status'),
+  scoreBar: document.getElementById('bar'),
+  scoreDisplay: document.getElementById('score'),
+  annotatedText: document.getElementById('annotated'),
+  explanationList: document.getElementById('explain'),
 };
 
 // Populate example pills
-EXAMPLES.forEach((msg, i) => {
-  const pill = document.createElement('button');
-  pill.className = 'pill';
-  pill.type = 'button';
-  pill.title = 'Append example to message';
-  pill.textContent = `Example ${i+1}`;
-  pill.addEventListener('click', () => {
-  // clear message first
-  els.ta.value = '';
-    const prefix = els.ta.value.trim() ? '\n\n' : '';
-    els.ta.value += prefix + msg;
-    els.ta.focus();
+EXAMPLES.forEach((message, index) => {
+  const pillButton = document.createElement('button');
+  pillButton.className = 'pill';
+  pillButton.type = 'button';
+  pillButton.title = 'Append example to message';
+  pillButton.textContent = `Example ${index + 1}`;
+
+  pillButton.addEventListener('click', () => {
+    // Clear message first
+    elements.messageTextarea.value = '';
+    const prefix = elements.messageTextarea.value.trim() ? '\n\n' : '';
+    elements.messageTextarea.value += prefix + message;
+    elements.messageTextarea.focus();
   });
-  els.ex.appendChild(pill);
+
+  elements.examplesContainer.appendChild(pillButton);
 });
 
-els.clr.addEventListener('click', () => {
-  els.ta.value = '';
+// Clear button event listener
+elements.clearButton.addEventListener('click', () => {
+  elements.messageTextarea.value = '';
   renderScore(0);
-  els.annotated.textContent = 'Highlighted results will appear here…';
-  els.explain.innerHTML = '<li>Run an analysis to see findings.</li>';
+  elements.annotatedText.textContent = 'Highlighted results will appear here…';
+  elements.explanationList.innerHTML = '<li>Run an analysis to see findings.</li>';
 });
 
-els.btn.addEventListener('click', async () => {
-  const text = els.ta.value.trim();
+// Analyze button event listener
+elements.analyzeButton.addEventListener('click', async () => {
+  const text = elements.messageTextarea.value.trim();
   if (!text) {
-    pulseStatus('Please paste a message first.');
-    els.ta.focus();
+    updateStatus('Please paste a message first.');
+    elements.messageTextarea.focus();
     return;
   }
-  setBusy(true);
-  pulseStatus('Analyzing with AI… <span class="spinner"></span>');
+
+  setBusyState(true);
+  updateStatus('Analyzing with AI… <span class="spinner"></span>');
+
   try {
-      const response = await fetch('http://127.0.0.1:8000/predict/', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ text: text }),
-      });
+    const response = await fetch('http://127.0.0.1:8000/predict/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: text }),
+    });
 
-      if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-      }
-      
-      // // The backend returns the prediction from Vertex AI.
-      const aiData = await response.json();
-
-      render(aiData);
-      pulseStatus('Analysis complete.');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    }
+    // The backend returns the prediction from Vertex AI.
+    const aiData = await response.json();
+    render(aiData);
+    updateStatus('Analysis complete.');
 
   } catch (error) {
-      console.error('Analysis Error:', error.message);
-      pulseStatus('Error analyzing message. Check console for details.');
-      render({ score: 0, annotated: text, findings: [{ label: 'Error', why: error.message }] });
+    console.error('Analysis Error:', error.message);
+    updateStatus('Error analyzing message. Check console for details.');
+    render({ score: 0, annotated: text, findings: [{ label: 'Error', why: error.message }] });
   } finally {
-      setBusy(false);
+    setBusyState(false);
   }
 });
 
-function setBusy(b) {
-  els.btn.disabled = b;
-  els.clr.disabled = b;
+// Utility functions
+function setBusyState(isBusy) {
+  elements.analyzeButton.disabled = isBusy;
+  elements.clearButton.disabled = isBusy;
 }
-function pulseStatus(html) { els.status.innerHTML = html; }
-function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+function updateStatus(html) {
+  elements.statusElement.innerHTML = html;
+}
+
+function wait(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+// Text highlighting and processing functions
 function highlight(text, ranges) {
   if (!ranges.length) return escapeHtml(text);
-  // Merge overlapping ranges, keep highest severity (bad > warn)
-  ranges.sort((a,b) => a.start - b.start || b.end - a.end);
+
+  // Merge overlapping ranges, keeping highest severity (bad > warn)
+  ranges.sort((a, b) => a.start - b.start || b.end - a.end);
   const merged = [];
-  for (const r of ranges) {
+
+  for (const range of ranges) {
     const last = merged[merged.length - 1];
-    if (!last || r.start > last.end) {
-      merged.push({ ...r });
+    if (!last || range.start > last.end) {
+      merged.push({ ...range });
     } else {
-      // overlap
-      last.end = Math.max(last.end, r.end);
-      if (severityRank(r.severity) > severityRank(last.severity)) last.severity = r.severity;
+      // Handle overlap
+      last.end = Math.max(last.end, range.end);
+      if (severityRank(range.severity) > severityRank(last.severity)) {
+        last.severity = range.severity;
+      }
     }
   }
-  let out = '';
-  let i = 0;
-  const src = text;
-  for (const r of merged) {
-    out += escapeHtml(src.slice(i, r.start));
-    const cls = r.severity === 'bad' ? 'hl-bad' : 'hl-warn';
-    out += `<span class="${cls}">` + escapeHtml(src.slice(r.start, r.end)) + '</span>';
-    i = r.end;
+
+  let output = '';
+  let currentIndex = 0;
+  const sourceText = text;
+
+  for (const range of merged) {
+    output += escapeHtml(sourceText.slice(currentIndex, range.start));
+    const cssClass = range.severity === 'bad' ? 'hl-bad' : 'hl-warn';
+    output += `<span class="${cssClass}">` + escapeHtml(sourceText.slice(range.start, range.end)) + '</span>';
+    currentIndex = range.end;
   }
-  out += escapeHtml(src.slice(i));
-  return out;
+
+  output += escapeHtml(sourceText.slice(currentIndex));
+  return output;
 }
 
-function severityRank(s) { return s === 'bad' ? 2 : 1; }
-function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c] || c)); }
+function severityRank(severity) {
+  return severity === 'bad' ? 2 : 1;
+}
+
+function escapeHtml(text) {
+  const htmlEntities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  };
+  return text.replace(/[&<>"']/g, char => htmlEntities[char] || char);
+}
 
 function render({ score, annotated, findings }) {
   renderScore(score);
-  els.annotated.innerHTML = annotated || '<span class="muted">No suspicious phrases found.</span>';
+  elements.annotatedText.innerHTML = annotated || '<span class="muted">No suspicious phrases found.</span>';
+
   if (!findings.length) {
-    els.explain.innerHTML = '<li><strong>Looks low risk.</strong> No obvious scam indicators were detected.</li>';
+    elements.explanationList.innerHTML = '<li><strong>Looks low risk.</strong> No obvious scam indicators were detected.</li>';
     return;
   }
-  els.explain.innerHTML = findings.map(f => {
-    const badge = f.severity === 'bad' ? '🔴' : '🟡';
-    return `<li>${badge} <strong>${f.label}</strong> — ${f.why}</li>`;
+
+  elements.explanationList.innerHTML = findings.map(finding => {
+    const badge = finding.severity === 'bad' ? '🔴' : '🟡';
+    return `<li>${badge} <strong>${finding.label}</strong> — ${finding.why}</li>`;
   }).join('');
 }
 
 function renderScore(score) {
-  els.bar.style.right = `${100 - score}%`;
-  els.score.textContent = `Score: ${score}`;
-  els.score.style.color = score > 70 ? 'var(--bad)' : score > 40 ? 'var(--warn)' : 'var(--good)';
+  elements.scoreBar.style.right = `${100 - score}%`;
+  elements.scoreDisplay.textContent = `Score: ${score}`;
+  elements.scoreDisplay.style.color = score > 70 ? 'var(--bad)' : score > 40 ? 'var(--warn)' : 'var(--good)';
 }
