@@ -1,11 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from google.cloud import aiplatform
-# from google.protobuf import json_format
-# from google.protobuf.struct_pb2 import Value
 from ..config import Settings, settings
 from typing import Dict, List, Union
 import json
+import traceback
 
 router = APIRouter()
 
@@ -15,6 +14,28 @@ class Message(BaseModel):
 def get_settings():
     return settings
 
+SYSTEM_INSTRUCTIONS = """
+You are a security analysis AI. Your task is to analyze a message for phishing and scam indicators. The output must be a single, valid JSON object.
+
+JSON Schema:
+{
+  "risk_level": "<'safe', 'warning', or 'dangerous'>",
+  "score": <integer 0-100, where 0 is safe and 100 is highly risky>,
+  "confidence": <integer 0-100>,
+  "annotated": "<original message with suspicious parts tagged with <bad> or <warn>>",
+  "findings": [
+    {
+      "label": "<a short title>",
+      "why": "<explanation>",
+      "severity": "<'warn' or 'bad'>"
+    }
+  ]
+}
+
+- A message is 'safe' only if it contains no suspicious elements and should have a score of 0.
+- A message is a 'warning' if it contains elements that could be part of a scam but are also common in legitimate messages (e.g., links, phone numbers). The score should be low, from 1-30.
+- A message is 'dangerous' if it contains strong indicators of a scam (e.g., a direct request for money, a password reset link to a suspicious domain, or a clear threat). The score should be high, from 31-100.
+"""
 
 def predict_custom_trained_model_sample(
     project: str,
@@ -46,35 +67,26 @@ async def get_prediction(message: Message, settings: Settings = Depends(get_sett
         if not all([settings.project_id, settings.endpoint_id, settings.location]):
             raise HTTPException(status_code=500, detail="Missing Vertex AI configuration.")
 
-        prompt_template = f"""
-You are an expert scam detection AI. Analyze the user's message for phishing and scam indicators.
-Your response MUST be a single, valid JSON object and nothing else. Do not include any text, explanations, or markdown formatting before or after the JSON object.
+        # simplified, token-efficient user prompt.
+        user_prompt = f"""
+Analyze the message for scam indicators.
 
-The JSON object must have the following structure:
-{{
-  "score": <an integer risk score from 0 to 100>,
-  "annotated": "<The original message with suspicious parts highlighted. You can invent simple tags like <warn>text</warn> or <bad>text</bad> but the frontend does not use them, so it is not critical.>",
-  "findings": [
-    {{
-      "label": "<A short title for the finding, e.g., 'Urgency and Fear Appeal'>",
-      "why": "<A one-sentence explanation of why this is risky.>",
-      "severity": "<'warn' or 'bad'>"
-    }}
-  ]
-}}
-
-Now, analyze the following message:
---- MESSAGE START ---
+Message:
+---
 {message.text}
---- MESSAGE END ---
+---
 """
 
         instances = [{
             "@requestFormat": "chatCompletions",
             "messages": [
                 {
+                    "role": "system",
+                    "content": SYSTEM_INSTRUCTIONS
+                },
+                {
                     "role": "user",
-                    "content": prompt_template
+                    "content": user_prompt
                 }
             ],
             "max_tokens": 1024,
@@ -90,22 +102,23 @@ Now, analyze the following message:
             instances=instances,
         )
         
-        # 1. Start with the prediction dictionary
         prediction_dict = prediction_response.predictions
-        
-        # 2. Navigate the real structure: dict -> 'choices' key -> list[0] -> 'message' key -> 'content' key
         ai_content_string = prediction_dict['choices'][0]['message']['content']
         
-        cleaned_json_string = ai_content_string.replace("```json", "").replace("```", "").strip()
-        
+        # Clean the string from potential markdown wrappers
+        if ai_content_string.strip().startswith("```json"):
+            cleaned_json_string = ai_content_string.replace("```json", "").replace("```", "").strip()
+        else:
+            cleaned_json_string = ai_content_string.strip()
+
+        # Attempt to load the JSON
         ai_data = json.loads(cleaned_json_string)
 
         return ai_data
 
     except Exception as e:
-        import traceback
         if 'prediction_response' in locals():
             print(f"[DEBUG ON ERROR] The prediction_response.predictions object was: {prediction_response.predictions}")
         print(f"An error occurred in get_prediction: {e}")
-        traceback.print_exc() 
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred while processing the AI response: {str(e)}")
