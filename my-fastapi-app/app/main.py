@@ -10,6 +10,7 @@ app.add_middleware(
         "http://localhost:8080",
         "http://127.0.0.1:8000",
         "null"
+        "https://huveewomg.github.io/trust-lens/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
