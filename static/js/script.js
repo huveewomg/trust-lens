@@ -69,7 +69,7 @@ elements.analyzeButton.addEventListener('click', async () => {
   updateStatus('Analyzing with AI… <span class="spinner"></span>');
 
   try {
-    const response = await fetch('https://trust-lens-703020842709.asia-southeast1.run.app/predict/', {
+    const response = await fetch('https://trust-lens-api-703020842709.asia-southeast1.run.app/predict/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
