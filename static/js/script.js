@@ -180,9 +180,14 @@ function render({ score, annotated, findings }) {
 
 // Highlight <bad> and <warn> tags in annotated text
 function highlightAnnotated(text) {
-  return text
+  const txt = document.createElement('textarea');
+  txt.innerHTML = text;
+  let decoded = txt.value;
+  return decoded
     .replace(/<bad>([\s\S]*?)<\/bad>/gi, '<span class="hl-bad">$1</span>')
-    .replace(/<warn>([\s\S]*?)<\/warn>/gi, '<span class="hl-warn">$1</span>');
+    .replace(/<warn>([\s\S]*?)<\/warn>/gi, '<span class="hl-warn">$1</span>')
+    .replace(/\(bad\)([\s\S]*?)\(\/bad\)/gi, '<span class="hl-bad">$2</span>')
+    .replace(/\(warn\)([\s\S]*?)\(\/warn\)/gi, '<span class="hl-warn">$2</span>');
 }
 
 function renderScore(score) {
