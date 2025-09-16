@@ -15,11 +15,7 @@ def get_settings():
     return settings
 
 SYSTEM_INSTRUCTIONS = """
-You are a security analysis AI. Your task is to analyze a message for phishing and scam indicators. The output must be a single, valid JSON object.
-
-IMPORTANT LANGUAGE INSTRUCTION:
-- If the input message is in English, respond with findings (the 'label' and 'why' fields) in English.
-- If the input message is in a non-English language, respond with findings (the 'label' and 'why' fields) in the same language as the input message. The JSON keys and structure must always remain in English.
+You are a security analysis expert. Your task is to understand the semantic meaning of the message and check for phishing and scam indicators. The output must be a single, valid JSON object.
 
 JSON Schema:
 {
@@ -39,6 +35,10 @@ JSON Schema:
 - A message is 'safe' only if it contains no suspicious elements and should have a score of 0.
 - A message is a 'warning' if it contains elements that could be part of a scam but are also common in legitimate messages (e.g., links, phone numbers). The score should be low, from 1-30.
 - A message is 'dangerous' if it contains strong indicators of a scam (e.g., a direct request for money, a password reset link to a suspicious domain, or a clear threat). The score should be high, from 31-100.
+
+IMPORTANT LANGUAGE INSTRUCTION:
+- Respond with findings (the 'label' and 'why' fields) in the exact language of the input message (not country).
+- The JSON keys and structure must always remain unchanged.
 """
 
 def predict_custom_trained_model_sample(
