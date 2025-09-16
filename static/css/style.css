@@ -75,8 +75,22 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 .score .num { min-width: 64px; text-align: right; font-feature-settings: "tnum" on, "lnum" on; }
 
 .annotated { border: 1px dashed var(--outline); border-radius: 10px; padding: 10px; background: #0c1125; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; }
-.hl-warn { background: var(--hl-warn-bg); outline: 1px solid #c6a20c66; border-radius: 4px; padding: 0 2px; }
-.hl-bad { background: var(--hl-bad-bg); outline: 1px solid #cc564a87; border-radius: 4px; padding: 0 2px; }
+.hl-warn {
+  background: #fffbe6;
+  color: #7a5a00;
+  outline: 1px solid #ffe066;
+  border-radius: 4px;
+  padding: 0 2px;
+  font-weight: 600;
+}
+.hl-bad {
+  background: #ff2d2d;
+  color: #fff;
+  outline: 1px solid #b30000;
+  border-radius: 4px;
+  padding: 0 2px;
+  font-weight: 700;
+}
 
 .explain li { margin: 8px 0; color: var(--muted); }
 .explain strong { color: var(--text); }
