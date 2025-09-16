@@ -161,8 +161,11 @@ function escapeHtml(text) {
 }
 
 function render({ score, annotated, findings }) {
+
   renderScore(score);
-  elements.annotatedText.innerHTML = annotated || '<span class="muted">No suspicious phrases found.</span>';
+  elements.annotatedText.innerHTML = annotated
+    ? highlightAnnotated(annotated)
+    : '<span class="muted">No suspicious phrases found.</span>';
 
   if (!findings.length) {
     elements.explanationList.innerHTML = '<li><strong>Looks low risk.</strong> No obvious scam indicators were detected.</li>';
@@ -173,6 +176,13 @@ function render({ score, annotated, findings }) {
     const badge = finding.severity === 'bad' ? '🔴' : '🟡';
     return `<li>${badge} <strong>${finding.label}</strong> — ${finding.why}</li>`;
   }).join('');
+}
+
+// Highlight <bad> and <warn> tags in annotated text
+function highlightAnnotated(text) {
+  return text
+    .replace(/<bad>([\s\S]*?)<\/bad>/gi, '<span class="hl-bad">$1</span>')
+    .replace(/<warn>([\s\S]*?)<\/warn>/gi, '<span class="hl-warn">$1</span>');
 }
 
 function renderScore(score) {
