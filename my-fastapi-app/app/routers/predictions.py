@@ -17,6 +17,10 @@ def get_settings():
 SYSTEM_INSTRUCTIONS = """
 You are a security analysis AI. Your task is to analyze a message for phishing and scam indicators. The output must be a single, valid JSON object.
 
+IMPORTANT LANGUAGE INSTRUCTION:
+- If the input message is in English, respond with findings (the 'label' and 'why' fields) in English.
+- If the input message is in a non-English language, respond with findings (the 'label' and 'why' fields) in the same language as the input message. The JSON keys and structure must always remain in English.
+
 JSON Schema:
 {
   "risk_level": "<'safe', 'warning', or 'dangerous'>",
@@ -25,8 +29,8 @@ JSON Schema:
   "annotated": "<original message with suspicious parts tagged with <bad> or <warn>>",
   "findings": [
     {
-      "label": "<a short title>",
-      "why": "<explanation>",
+      "label": "<a short title using the input language>",
+      "why": "<explanation using the input language>",
       "severity": "<'warn' or 'bad'>"
     }
   ]
