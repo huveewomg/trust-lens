@@ -1,3 +1,5 @@
+const API_URL = 'http://127.0.0.1:8000/predict/';
+
 // Configuration and data
 const EXAMPLES = [
   `URGENT: Your account has been suspended due to unusual activity. Verify your identity within 30 minutes at http://secure-login.paypai.com to avoid permanent restriction. Do not ignore this final notice!`,
@@ -69,7 +71,7 @@ elements.analyzeButton.addEventListener('click', async () => {
   updateStatus('Analyzing with AI… <span class="spinner"></span>');
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/predict/', {
+    const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
