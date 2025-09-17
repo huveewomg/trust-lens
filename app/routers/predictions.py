@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from google.cloud import aiplatform
-from ..config import Settings, settings
+from config import Settings, settings
 from typing import Dict, List, Union
 import json
 import traceback

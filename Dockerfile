@@ -13,9 +13,12 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev && \
 	apk del .build-deps
 
 # Copy application code into the container
-COPY ./app /app/app
+COPY ./app /app
+
+# Set PYTHONPATH to current directory
+ENV PYTHONPATH=/app
 
 # Command to run the application
 # Uvicorn needs to listen on host 0.0.0.0 to be accessible from outside the container
 # Use shell form to allow environment variable expansion
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT"]
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
