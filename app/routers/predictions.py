@@ -5,6 +5,8 @@ from config import Settings, settings
 from typing import Dict, List, Union
 import json
 import traceback
+import requests
+from google.auth.transport.requests import Request
 
 router = APIRouter()
 
@@ -50,32 +52,47 @@ def predict_custom_trained_model_sample(
 ):
     print(f"[VertexAI DEBUG] Project: {project}, Location: {location}")
     
-    # For dedicated endpoints, we need to use the dedicated domain
-    # The project number is 298459812143 (from the error message)
+    # For dedicated endpoints, we make direct HTTP requests
     project_number = "298459812143"
-    dedicated_endpoint_domain = f"{endpoint_id}.{location}-{project_number}.prediction.vertexai.goog"
+    dedicated_endpoint_url = f"https://{endpoint_id}.{location}-{project_number}.prediction.vertexai.goog/v1/projects/{project_number}/locations/{location}/endpoints/{endpoint_id}:predict"
     
-    print(f"[VertexAI DEBUG] Using dedicated endpoint domain: {dedicated_endpoint_domain}")
+    print(f"[VertexAI DEBUG] Using dedicated endpoint URL: {dedicated_endpoint_url}")
     
-    # Initialize the Vertex AI SDK with dedicated endpoint (domain only, no https://)
-    aiplatform.init(
-        project=project, 
-        location=location, 
-        credentials=credentials,
-        api_endpoint=dedicated_endpoint_domain
-    )
-
-    # Get a reference to the endpoint
-    endpoint = aiplatform.Endpoint(endpoint_name=endpoint_id)
+    # Get access token from credentials
+    if credentials:
+        credentials.refresh(Request())
+        access_token = credentials.token
+        print(f"[VertexAI DEBUG] Got access token: {access_token[:50]}...")
+    else:
+        raise Exception("No credentials available for dedicated endpoint")
     
-    print(f"[VertexAI DEBUG] Calling endpoint: {endpoint.resource_name}")
-
-    try:
-        response = endpoint.predict(instances=instances)
-        return response
-    except Exception as e:
-        print(f"[VertexAI DEBUG] Exception from SDK predict call: {str(e)}")
-        raise e
+    # Prepare headers
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    
+    # Prepare request payload
+    payload = {
+        "instances": instances
+    }
+    
+    print(f"[VertexAI DEBUG] Sending request to dedicated endpoint")
+    print(f"[VertexAI DEBUG] Payload: {json.dumps(payload, indent=2)}")
+    
+    # Make the HTTP request
+    response = requests.post(dedicated_endpoint_url, headers=headers, json=payload, timeout=120)
+    
+    print(f"[VertexAI DEBUG] Response status: {response.status_code}")
+    print(f"[VertexAI DEBUG] Response headers: {dict(response.headers)}")
+    
+    if response.status_code == 200:
+        result = response.json()
+        print(f"[VertexAI DEBUG] Response body: {result}")
+        return result
+    else:
+        print(f"[VertexAI DEBUG] Error response: {response.text}")
+        response.raise_for_status()
 
 
 @router.post("/predict/")
@@ -126,11 +143,19 @@ Message:
         print(f"[DEBUG] Full prediction response: {prediction_response}")
         print(f"[DEBUG] Prediction response type: {type(prediction_response)}")
         
-        # Handle different response formats
-        if hasattr(prediction_response, 'predictions'):
-            predictions_data = prediction_response.predictions
+        # Handle direct HTTP response format
+        if isinstance(prediction_response, dict):
+            # Direct HTTP response format
+            if 'predictions' in prediction_response:
+                predictions_data = prediction_response['predictions']
+            else:
+                predictions_data = prediction_response
         else:
-            predictions_data = prediction_response
+            # Fallback for SDK response
+            if hasattr(prediction_response, 'predictions'):
+                predictions_data = prediction_response.predictions
+            else:
+                predictions_data = prediction_response
             
         print(f"[DEBUG] Predictions data: {predictions_data}")
         
