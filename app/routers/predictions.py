@@ -106,18 +106,12 @@ async def get_prediction(message: Message, settings: Settings = Depends(get_sett
         if not all([settings.project_id, settings.endpoint_id, settings.location]):
             raise HTTPException(status_code=500, detail="Missing Vertex AI configuration.")
 
-        # Language-aware, optimized user prompt
+        # Concise, language-aware prompt for speed
         user_prompt = f"""
-IMPORTANT: Detect the language of this message and respond in the SAME language.
+Language: {message.text[:50]}... → Respond in SAME language.
 
-Analyze this message for scam indicators:
-
-Message:
----
+Analyze for scam indicators:
 {message.text}
----
-
-Remember: Respond in the same language as the input message above.
 """
 
         instances = [{
@@ -132,10 +126,10 @@ Remember: Respond in the same language as the input message above.
                     "content": user_prompt
                 }
             ],
-            "max_tokens": 512,  # Reduced from 1024 for faster response
-            "temperature": 0.7,  # Increased from 0.2 for faster generation
-            "top_p": 0.9,       # Reduced from 1.0 for faster generation
-            "top_k": 40         # Set specific value instead of -1
+            "max_tokens": 300,  # Further reduced for faster response
+            "temperature": 0.8,  # Higher temperature for faster generation
+            "top_p": 0.8,       # More focused for speed
+            "top_k": 20         # Lower top_k for speed
         }]
         
         # Get credentials
