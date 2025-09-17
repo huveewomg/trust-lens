@@ -33,4 +33,5 @@ venv/
 .venv/
 ENV/
 env/
-.ENV/
+.ENV/credentials.json
+*.json
