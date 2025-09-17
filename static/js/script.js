@@ -1,7 +1,5 @@
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_URL = isLocalhost 
-  ? 'http://127.0.0.1:8000/predict/' 
-  : 'https://trust-lens-production.up.railway.app/predict/';
+const API_URL = 'https://trust-lens-production.up.railway.app/predict/';
 
 // Configuration and data
 const EXAMPLES = [
