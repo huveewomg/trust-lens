@@ -15,7 +15,6 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev && \
 # Copy application code and startup script
 COPY ./app /app
 COPY start.py /app/
-COPY credentials.json /app/
 
 # Set PYTHONPATH to current directory
 ENV PYTHONPATH=/app
