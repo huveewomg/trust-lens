@@ -5,7 +5,8 @@ class Settings(BaseSettings):
     endpoint_id: str
     location: str
 
-    # class Config:
-    #     env_file = ".env"
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
 
 settings = Settings()

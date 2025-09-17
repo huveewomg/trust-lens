@@ -9,8 +9,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:8080",
         "http://127.0.0.1:8000",
-        "null"
-        "https://huveewomg.github.io"
+        "null",
+        "https://huveewomg.github.io",
+        "https://trust-lens-api-298459812143.asia-southeast1.run.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
