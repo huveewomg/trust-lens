@@ -1,4 +1,7 @@
-const API_URL = 'http://127.0.0.1:8000/predict/';
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocalhost 
+  ? 'http://127.0.0.1:8000/predict/' 
+  : 'https://trust-lens-api-298459812143.asia-southeast1.run.app/predict/';
 
 // Configuration and data
 const EXAMPLES = [
