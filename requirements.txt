@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+google-cloud-aiplatform
+jinja2
+pydantic
+python-dotenv
+pydantic-settings
