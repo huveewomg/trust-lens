@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 import json
 import os
-from google.oauth2 import credentials
+from google.oauth2 import service_account
 from google.auth import default
 
 class Settings(BaseSettings):
@@ -12,17 +12,11 @@ class Settings(BaseSettings):
 
     def get_credentials(self):
         if self.google_credentials_json:
-            # For Railway deployment
+            # For Railway deployment with service account
             creds_info = json.loads(self.google_credentials_json)
-            return credentials.UserAccessTokenCredentials(
-                token=None,
-                refresh_token=creds_info.get("refresh_token"),
-                id_token=None,
-                client_id=creds_info.get("client_id"),
-                client_secret=creds_info.get("client_secret")
-            )
+            return service_account.Credentials.from_service_account_info(creds_info)
         else:
-            # For local development or Cloud Run with default credentials
+            # For local development with default credentials
             creds, _ = default()
             return creds
 
