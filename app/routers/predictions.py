@@ -126,10 +126,10 @@ Analyze for scam indicators:
                     "content": user_prompt
                 }
             ],
-            "max_tokens": 300,  # Further reduced for faster response
-            "temperature": 0.8,  # Higher temperature for faster generation
-            "top_p": 0.8,       # More focused for speed
-            "top_k": 20         # Lower top_k for speed
+            "max_tokens": 512,  # Reduced from 1024 for faster response
+            "temperature": 0.7,  # Increased from 0.2 for faster generation
+            "top_p": 0.9,       # Reduced from 1.0 for faster generation
+            "top_k": 40         # Set specific value instead of -1
         }]
         
         # Get credentials
