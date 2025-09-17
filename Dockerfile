@@ -17,5 +17,5 @@ COPY ./app /app/app
 
 # Command to run the application
 # Uvicorn needs to listen on host 0.0.0.0 to be accessible from outside the container
-# The PORT environment variable is automatically provided by Cloud Run
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# Use shell form to allow environment variable expansion
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT"]
