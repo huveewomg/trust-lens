@@ -39,11 +39,7 @@ JSON Schema:
 - A message is 'dangerous' if it contains strong indicators of a scam (e.g., a direct request for money, a password reset link to a suspicious domain, or a clear threat). The score should be high, from 31-100.
 
 CRITICAL LANGUAGE INSTRUCTION:
-- ALWAYS respond in the EXACT same language as the input message
-- If input is in Malay (Bahasa Malaysia), respond in Malay
-- If input is in English, respond in English
-- If input is in Chinese, respond in Chinese
-- The 'label' and 'why' fields MUST use the same language as the input
+- Respond with findings (the 'label' and 'why' fields) in the exact language of the input message (not country).
 - JSON structure and keys remain in English, but content follows input language
 - Be concise and direct in your analysis
 """
