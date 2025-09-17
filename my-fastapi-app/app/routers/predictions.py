@@ -46,11 +46,12 @@ def predict_custom_trained_model_sample(
     endpoint_id: str,
     instances: List[Dict],
     location: str,
+    credentials=None
 ):
     print(f"[VertexAI DEBUG] Project: {project}, Location: {location}")
     
     # Initialize the Vertex AI SDK
-    aiplatform.init(project=project, location=location)
+    aiplatform.init(project=project, location=location, credentials=credentials)
 
     # Get a reference to the endpoint
     endpoint = aiplatform.Endpoint(endpoint_name=endpoint_id)
@@ -99,11 +100,15 @@ Message:
             "top_k": -1
         }]
         
+        # Get credentials
+        credentials = settings.get_credentials()
+        
         prediction_response = predict_custom_trained_model_sample(
             project=settings.project_id,
             endpoint_id=settings.endpoint_id,
             location=settings.location,
             instances=instances,
+            credentials=credentials
         )
         
         prediction_dict = prediction_response.predictions
