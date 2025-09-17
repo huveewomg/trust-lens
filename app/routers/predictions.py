@@ -50,8 +50,21 @@ def predict_custom_trained_model_sample(
 ):
     print(f"[VertexAI DEBUG] Project: {project}, Location: {location}")
     
-    # Initialize the Vertex AI SDK
-    aiplatform.init(project=project, location=location, credentials=credentials)
+    # For dedicated endpoints, we need to use the dedicated domain
+    # The project number is 298459812143 (from the error message)
+    project_number = "298459812143"
+    dedicated_endpoint_domain = f"{endpoint_id}.{location}-{project_number}.prediction.vertexai.goog"
+    api_endpoint = f"https://{dedicated_endpoint_domain}"
+    
+    print(f"[VertexAI DEBUG] Using dedicated endpoint: {api_endpoint}")
+    
+    # Initialize the Vertex AI SDK with dedicated endpoint
+    aiplatform.init(
+        project=project, 
+        location=location, 
+        credentials=credentials,
+        api_endpoint=api_endpoint
+    )
 
     # Get a reference to the endpoint
     endpoint = aiplatform.Endpoint(endpoint_name=endpoint_id)
