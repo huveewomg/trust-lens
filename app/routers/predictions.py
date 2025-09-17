@@ -111,8 +111,39 @@ Message:
             credentials=credentials
         )
         
-        prediction_dict = prediction_response.predictions
-        ai_content_string = prediction_dict['choices'][0]['message']['content']
+        print(f"[DEBUG] Full prediction response: {prediction_response}")
+        print(f"[DEBUG] Prediction response type: {type(prediction_response)}")
+        
+        # Handle different response formats
+        if hasattr(prediction_response, 'predictions'):
+            predictions_data = prediction_response.predictions
+        else:
+            predictions_data = prediction_response
+            
+        print(f"[DEBUG] Predictions data: {predictions_data}")
+        
+        # Extract the AI response content
+        if isinstance(predictions_data, list) and len(predictions_data) > 0:
+            # Handle list format
+            first_prediction = predictions_data[0]
+            if 'choices' in first_prediction:
+                ai_content_string = first_prediction['choices'][0]['message']['content']
+            elif 'content' in first_prediction:
+                ai_content_string = first_prediction['content']
+            else:
+                ai_content_string = str(first_prediction)
+        elif isinstance(predictions_data, dict):
+            # Handle dict format
+            if 'choices' in predictions_data:
+                ai_content_string = predictions_data['choices'][0]['message']['content']
+            elif 'content' in predictions_data:
+                ai_content_string = predictions_data['content']
+            else:
+                ai_content_string = str(predictions_data)
+        else:
+            ai_content_string = str(predictions_data)
+        
+        print(f"[DEBUG] Raw AI content: {ai_content_string}")
         
         # Clean the string from potential markdown wrappers
         if ai_content_string.strip().startswith("```json"):
@@ -120,8 +151,29 @@ Message:
         else:
             cleaned_json_string = ai_content_string.strip()
 
-        # Attempt to load the JSON
-        ai_data = json.loads(cleaned_json_string)
+        print(f"[DEBUG] Cleaned JSON string: {cleaned_json_string}")
+
+        # Attempt to load the JSON with better error handling
+        try:
+            ai_data = json.loads(cleaned_json_string)
+            print(f"[DEBUG] Successfully parsed JSON: {ai_data}")
+        except json.JSONDecodeError as json_error:
+            print(f"[DEBUG] JSON parsing failed: {json_error}")
+            print(f"[DEBUG] Problematic string: {cleaned_json_string[:200]}...")
+            # Return a fallback response
+            ai_data = {
+                "risk_level": "warning",
+                "score": 50,
+                "confidence": 50,
+                "annotated": cleaned_json_string,
+                "findings": [
+                    {
+                        "label": "Parse Error",
+                        "why": f"AI response could not be parsed: {str(json_error)}",
+                        "severity": "warn"
+                    }
+                ]
+            }
 
         return ai_data
 
