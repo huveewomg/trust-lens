@@ -38,9 +38,14 @@ JSON Schema:
 - A message is a 'warning' if it contains elements that could be part of a scam but are also common in legitimate messages (e.g., links, phone numbers). The score should be low, from 1-30.
 - A message is 'dangerous' if it contains strong indicators of a scam (e.g., a direct request for money, a password reset link to a suspicious domain, or a clear threat). The score should be high, from 31-100.
 
-IMPORTANT LANGUAGE INSTRUCTION:
-- Respond with findings (the 'label' and 'why' fields) in the exact language of the input message (not country).
-- The JSON keys and structure must always remain unchanged.
+CRITICAL LANGUAGE INSTRUCTION:
+- ALWAYS respond in the EXACT same language as the input message
+- If input is in Malay (Bahasa Malaysia), respond in Malay
+- If input is in English, respond in English
+- If input is in Chinese, respond in Chinese
+- The 'label' and 'why' fields MUST use the same language as the input
+- JSON structure and keys remain in English, but content follows input language
+- Be concise and direct in your analysis
 """
 
 def predict_custom_trained_model_sample(
@@ -81,7 +86,7 @@ def predict_custom_trained_model_sample(
     print(f"[VertexAI DEBUG] Payload: {json.dumps(payload, indent=2)}")
     
     # Make the HTTP request
-    response = requests.post(dedicated_endpoint_url, headers=headers, json=payload, timeout=120)
+    response = requests.post(dedicated_endpoint_url, headers=headers, json=payload, timeout=30)
     
     print(f"[VertexAI DEBUG] Response status: {response.status_code}")
     print(f"[VertexAI DEBUG] Response headers: {dict(response.headers)}")
@@ -101,14 +106,18 @@ async def get_prediction(message: Message, settings: Settings = Depends(get_sett
         if not all([settings.project_id, settings.endpoint_id, settings.location]):
             raise HTTPException(status_code=500, detail="Missing Vertex AI configuration.")
 
-        # simplified, token-efficient user prompt.
+        # Language-aware, optimized user prompt
         user_prompt = f"""
-Analyze the message for scam indicators.
+IMPORTANT: Detect the language of this message and respond in the SAME language.
+
+Analyze this message for scam indicators:
 
 Message:
 ---
 {message.text}
 ---
+
+Remember: Respond in the same language as the input message above.
 """
 
         instances = [{
@@ -123,10 +132,10 @@ Message:
                     "content": user_prompt
                 }
             ],
-            "max_tokens": 1024,
-            "temperature": 0.2,
-            "top_p": 1.0,
-            "top_k": -1
+            "max_tokens": 512,  # Reduced from 1024 for faster response
+            "temperature": 0.7,  # Increased from 0.2 for faster generation
+            "top_p": 0.9,       # Reduced from 1.0 for faster generation
+            "top_k": 40         # Set specific value instead of -1
         }]
         
         # Get credentials
