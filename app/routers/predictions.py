@@ -231,8 +231,8 @@ async def semak_mule(message: PhoneNumber):
         payload = {
             "data": {
                 "category": "telefon",
-                "bankAccount": message,
-                "telNo": message,
+                "bankAccount": message.number,
+                "telNo": message.number,
                 "companyName": "",
                 "captcha": ""
             }
