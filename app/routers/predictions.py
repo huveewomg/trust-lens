@@ -220,3 +220,28 @@ Analyze for scam indicators:
         print(f"An error occurred in get_prediction: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred while processing the AI response: {str(e)}")
+
+@router.post("/semakMule/")
+async def semak_mule(message: str):
+    # Call the external SemakMule API
+    try:
+        api_url = "https://semakmule.rmp.gov.my/api/mule/get_search_data.php"
+        payload = {
+            "data": {
+                "category": "telefon",
+                "bankAccount": message,
+                "telNo": message,
+                "companyName": "",
+                "captcha": ""
+            }
+        }
+        headers = {
+            "Content-Type": "application/json",
+        }
+        response = requests.post(api_url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"An error occurred in semak_mule: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred while calling SemakMule API: {str(e)}")
