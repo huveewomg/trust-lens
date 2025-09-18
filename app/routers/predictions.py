@@ -13,6 +13,9 @@ router = APIRouter()
 class Message(BaseModel):
     text: str
 
+class PhoneNumber(BaseModel):
+    number: str
+
 def get_settings():
     return settings
 
@@ -221,8 +224,8 @@ Analyze for scam indicators:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred while processing the AI response: {str(e)}")
 
-@router.post("/semakMule/")
-async def semak_mule(message: str):
+@router.post("/semakmule/")
+async def semak_mule(message: PhoneNumber):
     # Call the external SemakMule API
     try:
         api_url = "https://semakmule.rmp.gov.my/api/mule/get_search_data.php"
