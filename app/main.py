@@ -6,17 +6,16 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=[
-    #     "http://localhost:8080",
-    #     "http://127.0.0.1:8000",
-    #     "null",
-    #     "https://huveewomg.github.io",
-    #     "https://trust-lens-api-298459812143.asia-southeast1.run.app"
-    # ],
+    allow_origins=[
+        "http://localhost:8080",
+        "http://127.0.0.1:8000",
+        "null",
+        "https://huveewomg.github.io",
+        "https://trust-lens-api-298459812143.asia-southeast1.run.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-    allow_origins=["*"]
+    allow_headers=["*"]
 )
 
 app.include_router(items.router)
