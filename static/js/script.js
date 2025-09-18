@@ -5,20 +5,13 @@ const API_URL = isLocalhost
 
 // Configuration and data
 const EXAMPLES = [
-  `URGENT: Your account has been suspended due to unusual activity. Verify your identity within 30 minutes at http://secure-login.paypai.com to avoid permanent restriction. Do not ignore this final notice!`,
   `Congratulations! You've won a $1000 gift card. To claim, click https://bit.ly/3XyzAb and provide your bank details to process the reward.`,
-  `DHL: Your package is on hold. Pay the RM9.90 customs fee now to release: https://t.co/abc123.`,
+  `重要通知：您的银行账户存在异常，为了避免冻结，请立即点击链接进行验证：https://tinyurl.com/bank-secure`,
   `We detected a login from a new device. Reply with your OTP code to re-activate your account immediately.`,
-  `Invest with us and GUARANTEED double your money in 7 days. Message us on WhatsApp wa.me/123456 for details.`,
   `Malaysia Post: Sorry our driver missed you today as nobody answered. To book and reschedule, please verify the address in the link within 12 hours: https://pos-my.blog/mypost`,
-  `Dear Customer, you have 6,833 points expiring on 09/05!  Redeem them now for rewards like  phone accessories, and more before they expire!Click to view your options: https://maxis-my.best/mypoint`,
-  `Your account is at risk! Click here to verify your identity: https://secure-login-verify.com/12345. Failure to do so will result in permanent suspension.`,
-  `Job Alert: You have a new job offer! Click here to view details and confirm your interest: https://job-offer-secure.com/offer12345.`,
-  `RM 0 Maybank:TQ for using your card ending 1207 for RM3590.00 @ TOMEI. NOT you?Call Maybank 0364198764 Immediately`,
+  `รับเงินฟรี 1000 บาท! เข้าร่วมกลุ่มการลงทุนของเราตอนนี้เพื่อผลตอบแทนสูง! ติดต่อเราที่: +66912345678`,
+  `Kesempatan kerja menarik! Butuh karyawan untuk pekerjaan online. Gaji tinggi, tidak perlu pengalaman. Daftar di sini: http://loker-cepat.net/`,
   `Your 2024 tax is overdue and you have violated the Malaysian Criminal Code. Please complete the payment within 24 hours: https://mybayarw.cyou/my`,
-  `Terkini :Sumbangan Tunai Rahmah (STR) fasa 3-Isi rumah pendapatan kurang 2,500 ringgit, layak terima sumbangan sehingga 3,500 ringgit bergantung kepada bilangan anak. Cara memohon: http://telegram-bantuankerajaan23.my.id/viraljawatan/16`,
-  `RM0 MySejahtera: Bantuan Khas Kewangan COVID-19 sebanyak RM800 telah kredit ke TNG eWallet anda. Sila semak baki dan tuntutan anda di https://touchngo.cc`,
-  `Polis Negara teleh memberi kuasa kepada anda untuk segera menjawab saman (RM300) yang dilampirkan dalam tempoh 72 jam. Jika anda gagal menjawab, kami tidak mempunyai pilihan selain mengambil tindakan undang-undang terhadap anda. Sila jawab saman anda melalui laman web: http://polis.cyou/saman`
 ];
 
 // DOM element references
