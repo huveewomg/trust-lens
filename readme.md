@@ -146,7 +146,7 @@ docker run -p 8000:8000 \
 Our system uses the **SEA-LION v4 27B Instruct** model hosted on Google Cloud Vertex AI, specifically configured for:
 
 - **System Instructions**: Structured JSON output for consistent parsing
-- **Temperature**: 0.2 for reliable, deterministic analysis  
+- **Temperature**: 0.7 for reliable, deterministic analysis without compromising the speed
 - **Regional Deployment**: asia-southeast1 for optimal latency
 - **Token Optimization**: Efficient prompting for cost-effective operation
 
