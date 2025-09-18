@@ -31,7 +31,8 @@ JSON Schema:
       "why": "<explanation using the input language>",
       "severity": "<'warn' or 'bad'>"
     }
-  ]
+  ],
+  "summary": "<a concise summary of the main intnentions of the message in the input language>"
 }
 
 - A message is 'safe' only if it contains no suspicious elements and should have a score of 0.
