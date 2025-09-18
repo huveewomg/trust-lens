@@ -162,10 +162,8 @@ Our system uses the **SEA-LION v4 27B Instruct** model hosted on Google Cloud Ve
 - **Domain Validation**: Real-time WHOIS and reputation checks
 - **URL Expansion**: Resolves shortened links to reveal true destinations  
 - **🔗 Technical Validation**: WHOIS lookups, domain reputation checks
-- **🏢 Enterprise API**: Bulk message analysis for organizations
-- **📊 Threat Intelligence**: Community-driven scam pattern database
+- **📊 Threat Intelligence**: Populated with data sourced from government and official banking websites.
 - **🌐 More Languages**: Expand beyond current SEA language support
-
 
 ## 🙏 Acknowledgments
 - **AI Singapore** for the SEA-LION model and organizing the hackathon
