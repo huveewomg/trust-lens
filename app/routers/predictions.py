@@ -225,6 +225,7 @@ Analyze for scam indicators:
 
 @router.post("/semakmule/")
 async def semak_mule(number: PhoneNumber):
+    print(f"[SemakMule DEBUG] Received phone number: {number.number}")
     # Call the external SemakMule API
     try:
         api_url = "https://semakmule.rmp.gov.my/api/mule/get_search_data.php"
