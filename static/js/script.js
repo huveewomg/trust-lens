@@ -158,38 +158,32 @@ function wait(milliseconds) {
 
 // Extract phone numbers from text
 function extractPhoneNumbers(text) {
-  // Malaysian phone number patterns
-  const patterns = [
-    /(?:\+?6?01[0-9][-\s]?[0-9]{3,4}[-\s]?[0-9]{4})/g, // Malaysian mobile
-    /(?:\+?6?03[-\s]?[0-9]{4}[-\s]?[0-9]{4})/g, // KL landline
-    /(?:\+?6?0[4-9][-\s]?[0-9]{3,4}[-\s]?[0-9]{4})/g, // Other Malaysian numbers
-    /(?:\+?6?[0-9]{2,3}[-\s]?[0-9]{3,4}[-\s]?[0-9]{4})/g, // General Malaysian format
-    /(?:[0-9]{10,11})/g, // Simple 10-11 digit numbers
-  ];
+  // Find all potential phone numbers that start with +, 6, or 0
+  const potentialNumbers = text.match(/[+60]\d+/g) || [];
+  const validNumbers = [];
   
-  const phoneNumbers = new Set();
-  
-  patterns.forEach(pattern => {
-    const matches = text.match(pattern);
-    if (matches) {
-      matches.forEach(match => {
-        // Clean the number (remove spaces, dashes, plus signs)
-        const cleanNumber = match.replace(/[-\s+]/g, '');
-        // Add Malaysian prefix if missing and number looks Malaysian
-        if (cleanNumber.length >= 9 && cleanNumber.length <= 12) {
-          if (cleanNumber.startsWith('6')) {
-            phoneNumbers.add(cleanNumber);
-          } else if (cleanNumber.startsWith('0')) {
-            phoneNumbers.add('6' + cleanNumber);
-          } else if (cleanNumber.length === 10 || cleanNumber.length === 11) {
-            phoneNumbers.add(cleanNumber);
-          }
-        }
-      });
+  for (let number of potentialNumbers) {
+    // Remove any non-digit characters
+    let cleanNumber = number.replace(/\D/g, '');
+    
+    // Remove leading 6 if present
+    if (cleanNumber.startsWith('6')) {
+      cleanNumber = cleanNumber.substring(1);
     }
-  });
+    
+    // Test against Malaysian phone regex
+    const phoneRegex = /^(?:011\d{8}|01[2-9]\d{7}|03\d{7})$/;
+    if (phoneRegex.test(cleanNumber)) {
+      validNumbers.push(cleanNumber);
+    }
+  }
   
-  return Array.from(phoneNumbers);
+  if (validNumbers.length > 0) {
+    return validNumbers[0]; // Return the first valid number found
+  } else {
+    semakMuleContainer.innerHTML = 'No phone numbers detected in the message.';
+    return null;
+  }
 }
 
 // Text highlighting and processing functions
@@ -294,12 +288,8 @@ function populateSemakMule(result) {
   }
   
   result.table_data.forEach(([phoneNumber, reportCount]) => {
-    const phoneDiv = document.createElement('div');
-    phoneDiv.innerHTML = `<strong>${phoneNumber}</strong> is reported <span style="color: var(--bad); font-weight: bold;">${reportCount} times</span>`;
-    semakMuleContainer.appendChild(phoneDiv);
+    semakMuleContainer.innerHTML += `<strong>${phoneNumber}</strong> is reported <span style="color: var(--bad); font-weight: bold;">${reportCount} times</span>`;
   });
-  
-  semakMuleContainer.appendChild(resultDiv);
 }
 
 function renderSummary(summary) {
@@ -311,7 +301,5 @@ function renderSummary(summary) {
     return;
   }
   // Create summary display
-  const summaryDiv = document.createElement('div');
-  summaryDiv.innerHTML = `${summary}`;
-  summaryContainer.appendChild(summaryDiv);
+  summaryContainer.innerHTML = `${summary}`;
 }
