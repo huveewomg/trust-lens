@@ -2,6 +2,7 @@ const isLocalhost = window.location.hostname === 'localhost' || window.location.
 const API_URL = isLocalhost 
   ? 'http://127.0.0.1:8000/predict/' 
   : 'https://trust-lens-production.up.railway.app/predict/';
+const SEMAKMULE_API_URL = 'https://trust-lens-production.up.railway.app/semakmule/';
 
 // Configuration and data
 const EXAMPLES = [
@@ -52,6 +53,10 @@ elements.clearButton.addEventListener('click', () => {
   renderScore(0);
   elements.annotatedText.textContent = 'Highlighted results will appear here…';
   elements.explanationList.innerHTML = '<li>Run an analysis to see findings.</li>';
+  
+  // Clear SemakMule results
+  const semakMuleContainer = document.getElementById('semakMuleResults');
+  semakMuleContainer.innerHTML = 'SemakMule results will appear here…';
 });
 
 // Analyze button event listener
@@ -64,30 +69,74 @@ elements.analyzeButton.addEventListener('click', async () => {
   }
 
   setBusyState(true);
-  updateStatus('Analyzing with AI… <span class="spinner"></span>');
+  updateStatus('Analyzing with AI and SemakMule… <span class="spinner"></span>');
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text: text }),
-    });
+    // Extract phone numbers for SemakMule API
+    const phoneNumbers = extractPhoneNumbers(text);
+    
+    // Create parallel API calls
+    const apiCalls = [
+      // Main AI analysis
+      fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: text }),
+      }),
+    ];
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    // Add SemakMule API call if phone numbers found
+    if (phoneNumbers.length > 0) {
+      apiCalls.push(
+        fetch(SEMAKMULE_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ phone_numbers: phoneNumbers }),
+        })
+      );
     }
-    // The backend returns the prediction from Vertex AI.
-    const aiData = await response.json();
-    render(aiData);
+
+    // Execute both API calls in parallel
+    const responses = await Promise.allSettled(apiCalls);
+
+    // Process main AI analysis response
+    const mainResponse = responses[0];
+    if (mainResponse.status === 'fulfilled' && mainResponse.value.ok) {
+      const aiData = await mainResponse.value.json();
+      render(aiData);
+    } else {
+      const error = mainResponse.status === 'rejected' ? mainResponse.reason : 
+        await mainResponse.value.json().catch(() => ({ detail: `HTTP error! status: ${mainResponse.value.status}` }));
+      throw new Error(error.detail || error.message || 'AI Analysis failed');
+    }
+
+    // Process SemakMule response if it was called
+    if (responses.length > 1) {
+      const semakMuleResponse = responses[1];
+      if (semakMuleResponse.status === 'fulfilled' && semakMuleResponse.value.ok) {
+        const semakMuleData = await semakMuleResponse.value.json();
+        populateSemakMule(semakMuleData);
+      } else {
+        console.warn('SemakMule API failed:', semakMuleResponse.reason || 'Network error');
+        populateSemakMule(null); // Show "no data" message
+      }
+    } else {
+      // No phone numbers found, show appropriate message
+      const semakMuleContainer = document.getElementById('semakMuleResults');
+      semakMuleContainer.innerHTML = '<div class="muted">No phone numbers detected in the message.</div>';
+    }
+
     updateStatus('Analysis complete.');
 
   } catch (error) {
     console.error('Analysis Error:', error.message);
     updateStatus('Error analyzing message. Check console for details.');
     render({ score: 0, annotated: text, findings: [{ label: 'Error', why: error.message }] });
+    populateSemakMule(null);
   } finally {
     setBusyState(false);
   }
@@ -105,6 +154,42 @@ function updateStatus(html) {
 
 function wait(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+// Extract phone numbers from text
+function extractPhoneNumbers(text) {
+  // Malaysian phone number patterns
+  const patterns = [
+    /(?:\+?6?01[0-9][-\s]?[0-9]{3,4}[-\s]?[0-9]{4})/g, // Malaysian mobile
+    /(?:\+?6?03[-\s]?[0-9]{4}[-\s]?[0-9]{4})/g, // KL landline
+    /(?:\+?6?0[4-9][-\s]?[0-9]{3,4}[-\s]?[0-9]{4})/g, // Other Malaysian numbers
+    /(?:\+?6?[0-9]{2,3}[-\s]?[0-9]{3,4}[-\s]?[0-9]{4})/g, // General Malaysian format
+    /(?:[0-9]{10,11})/g, // Simple 10-11 digit numbers
+  ];
+  
+  const phoneNumbers = new Set();
+  
+  patterns.forEach(pattern => {
+    const matches = text.match(pattern);
+    if (matches) {
+      matches.forEach(match => {
+        // Clean the number (remove spaces, dashes, plus signs)
+        const cleanNumber = match.replace(/[-\s+]/g, '');
+        // Add Malaysian prefix if missing and number looks Malaysian
+        if (cleanNumber.length >= 9 && cleanNumber.length <= 12) {
+          if (cleanNumber.startsWith('6')) {
+            phoneNumbers.add(cleanNumber);
+          } else if (cleanNumber.startsWith('0')) {
+            phoneNumbers.add('6' + cleanNumber);
+          } else if (cleanNumber.length === 10 || cleanNumber.length === 11) {
+            phoneNumbers.add(cleanNumber);
+          }
+        }
+      });
+    }
+  });
+  
+  return Array.from(phoneNumbers);
 }
 
 // Text highlighting and processing functions
@@ -158,7 +243,7 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, char => htmlEntities[char] || char);
 }
 
-function render({ score, annotated, findings }) {
+function render({ score, annotated, findings, summary }) {
 
   renderScore(score);
   elements.annotatedText.innerHTML = annotated
@@ -174,6 +259,11 @@ function render({ score, annotated, findings }) {
     const badge = finding.severity === 'bad' ? '🔴' : '🟡';
     return `<li>${badge} <strong>${finding.label}</strong> — ${finding.why}</li>`;
   }).join('');
+
+  // Render summary if provided
+  if (summary) {
+    renderSummary(summary);
+  }
 }
 
 // Highlight <bad> and <warn> tags in annotated text
@@ -192,4 +282,56 @@ function renderScore(score) {
   elements.scoreBar.style.right = `${100 - score}%`;
   elements.scoreDisplay.textContent = `Score: ${score}`;
   elements.scoreDisplay.style.color = score > 70 ? 'var(--bad)' : score > 40 ? 'var(--warn)' : 'var(--good)';
+}
+
+function populateSemakMule(result) {
+  const semakMuleContainer = document.getElementById('semakMuleResults');
+  semakMuleContainer.innerHTML = ''; // Clear previous results
+  
+  if (!result || !result.table_data || result.table_data.length === 0) {
+    semakMuleContainer.innerHTML = '<div class="muted">No SemakMule data found for this phone number.</div>';
+    return;
+  }
+  
+  // Create results display
+  const resultDiv = document.createElement('div');
+  resultDiv.style.marginTop = '12px';
+  
+  result.table_data.forEach(([phoneNumber, reportCount]) => {
+    const phoneDiv = document.createElement('div');
+    phoneDiv.style.marginBottom = '8px';
+    phoneDiv.innerHTML = `<strong>${phoneNumber}</strong> is reported <span style="color: var(--bad); font-weight: bold;">${reportCount} times</span>`;
+    resultDiv.appendChild(phoneDiv);
+  });
+  
+  // Add summary if multiple phone numbers
+  if (result.table_data.length > 1) {
+    const summaryDiv = document.createElement('div');
+    summaryDiv.style.marginTop = '12px';
+    summaryDiv.style.padding = '8px';
+    summaryDiv.style.backgroundColor = 'var(--bg-muted)';
+    summaryDiv.style.borderRadius = '4px';
+    summaryDiv.innerHTML = `<small>Total phone numbers found: ${result.table_data.length}</small>`;
+    resultDiv.appendChild(summaryDiv);
+  }
+  
+  semakMuleContainer.appendChild(resultDiv);
+}
+
+function renderSummary(summary) {
+  const summaryContainer = document.getElementById('summaryResults');
+  summaryContainer.innerHTML = ''; // Clear previous results
+
+  if (!summary || summary.length === 0) {
+    summaryContainer.innerHTML = '<div class="muted">No summary data found.</div>';
+    return;
+  }
+  // Create summary display
+  const summaryDiv = document.createElement('div');
+  summaryDiv.style.marginTop = '12px';
+  summaryDiv.style.padding = '8px';
+  summaryDiv.style.backgroundColor = 'var(--bg-muted)';
+  summaryDiv.style.borderRadius = '4px';
+  summaryDiv.innerHTML = `<strong>Summary:</strong> ${summary}`;
+  summaryContainer.appendChild(summaryDiv);
 }
