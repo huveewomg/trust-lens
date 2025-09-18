@@ -242,7 +242,7 @@ async def semak_mule(number: PhoneNumber):
             "Content-Type": "application/json",
         }
         print(f"[SemakMule DEBUG] Sending request to SemakMule API with payload: {payload}")
-        response = requests.post(api_url, json=payload, headers=headers, timeout=10)
+        response = requests.post(api_url, json=payload, headers=headers, timeout=10, verify=False)
         response.raise_for_status()
         print(f"[SemakMule DEBUG] SemakMule response: {response.json()}")
         return response.json()
