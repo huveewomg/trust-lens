@@ -74,6 +74,7 @@ elements.analyzeButton.addEventListener('click', async () => {
   try {
     // Extract phone numbers for SemakMule API
     const phoneNumbers = extractPhoneNumbers(text);
+    console.log('Extracted Phone Numbers:', phoneNumbers);
     
     // Create parallel API calls
     const apiCalls = [
@@ -95,7 +96,7 @@ elements.analyzeButton.addEventListener('click', async () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ phone_numbers: phoneNumbers }),
+          body: JSON.stringify({ number: phoneNumbers }),
         })
       );
     }
