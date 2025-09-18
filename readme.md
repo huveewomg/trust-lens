@@ -3,7 +3,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Demo-Live-brightgreen)](https://huveewomg.github.io/trust-lens/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![SEA-LION](https://img.shields.io/badge/Model-SEA--LION%209B-orange)](https://www.aisingapore.org/aiproducts/sea-lion/)
+[![SEA-LION](https://img.shields.io/badge/Model-SEA--LION%2027B-orange)](https://www.aisingapore.org/aiproducts/sea-lion/)
 [![GCP](https://img.shields.io/badge/Hosted%20on-Google%20Cloud-blue)](https://cloud.google.com)
 
 ## 🚨 The Problem
