@@ -3,8 +3,22 @@
 
 [![Live Demo](https://img.shields.io/badge/Demo-Live-brightgreen)](https://huveewomg.github.io/trust-lens/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![SEA-LION](https://img.shields.io/badge/Model-SEA--LION%209B-orange)](https://www.aisingapore.org/aiproducts/sea-lion/)
-[![GCP](https://img.shields.io/badge/Hosted%20on-Google%20Cloud-blue)](https://cloud.google.com)
+[![SEA-LION](https://img.shields.io/badge/Model-SEA--LION%2027B-orange)](https://www.aisingapore.org/aiproducts/sea-lion/)
+[![GCP](https://img.shields.io/badge/Hosted%20on-%20Railway-blue)](https://railway.com/)
+
+## 🎬 Showcases
+
+Scam Message in English
+![English_Language](https://github.com/user-attachments/assets/678f1cdf-a235-420a-9485-65d7cd74b8d1)
+
+Scam Message in Chinese
+![Chinese_Language](https://github.com/user-attachments/assets/9d339cab-9b71-439c-99d3-ac78689f611c)
+
+Scam Message in Malay
+![Malay_Language](https://github.com/user-attachments/assets/df28c456-9109-472b-a759-6eb23a80361d)
+
+Scam Message in Thai
+![Thai_Language](https://github.com/user-attachments/assets/84e7ee31-46d1-47fd-bffa-e118d7e2b9f2)
 
 ## 🚨 The Problem
 
@@ -23,7 +37,7 @@ In Southeast Asia, digital users face a relentless barrage of **multilingual sca
 
 ## 💡 Our Solution: Trust Lens
 
-Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid rule-based detection with advanced language understanding powered by **SEA-LION 9B**, specifically fine-tuned for Southeast Asian contexts.
+Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid rule-based detection with advanced language understanding powered by **SEA-LION v4 27B**, specifically fine-tuned for Southeast Asian contexts.
 
 ### 🎯 Key Features
 
@@ -34,24 +48,23 @@ Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid r
 - **📊 Smart Scoring**: 0-100 risk score with confidence levels  
 - **🔍 Detailed Breakdown**: Highlights suspicious elements with explanations
 - **💡 Actionable Advice**: Provides clear safety recommendations
-- **🔗 Technical Validation**: WHOIS lookups, domain reputation checks
 - **🎯 Scam Categorization**: Identifies specific threat types
 
 ### 🛠️ Technical Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   FastAPI        │    │  Google Cloud   │
-│   (HTML/CSS/JS) │───▶│   Backend        │───▶│  Vertex AI      │
-│                 │    │                  │    │  (SEA-LION 9B)  │
+│     Frontend    │    │     FastAPI      │    │   Google Cloud  │
+│  (HTML/CSS/JS)  │───>│     Backend      │───>│    Vertex AI    │
+│                 │    │    (Railway)     │    │(SEA-LION v4 27B)│
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
 **Tech Stack:**
 - **Backend**: FastAPI with Python 3.12
-- **AI Model**: SEA-LION 9B Instruct via Google Cloud Vertex AI
+- **AI Model**: SEA-LION v4 27B Model via Google Cloud Vertex AI
 - **Frontend**: Vanilla HTML/CSS/JavaScript
-- **Hosting**: Google Cloud Run
+- **Hosting**: Railway
 - **Region**: asia-southeast1 (Singapore)
 
 ### 🧪 How It Works
@@ -60,7 +73,7 @@ Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid r
 2. **SEA-LION Analysis**: Deep language understanding and context evaluation
 3. **Risk Assessment**: Generates numerical score (0-100) and confidence level
 4. **Explanation Generation**: Provides annotated text highlighting issues
-5. **Actionable Recommendations**: Suggests specific safety measures
+5. **Concise Summary**: Suggests the intent of the message
 
 ## 🌏 Southeast Asia Impact
 
@@ -129,16 +142,14 @@ docker run -p 8000:8000 \
 ## 🔬 Technical Deep Dive
 
 ### SEA-LION Model Implementation
-Our system uses the **SEA-LION 9B Instruct** model hosted on Google Cloud Vertex AI, specifically configured for:
+Our system uses the **SEA-LION v4 27B Instruct** model hosted on Google Cloud Vertex AI, specifically configured for:
 
 - **System Instructions**: Structured JSON output for consistent parsing
-- **Temperature**: 0.2 for reliable, deterministic analysis  
+- **Temperature**: 0.7 for reliable, deterministic analysis without compromising the speed
 - **Regional Deployment**: asia-southeast1 for optimal latency
 - **Token Optimization**: Efficient prompting for cost-effective operation
 
 ### Security Features
-- **Domain Validation**: Real-time WHOIS and reputation checks
-- **URL Expansion**: Resolves shortened links to reveal true destinations  
 - **Pattern Recognition**: Detects common social engineering tactics
 - **Confidence Scoring**: Provides reliability metrics for each assessment
 
@@ -148,11 +159,11 @@ Our system uses the **SEA-LION 9B Instruct** model hosted on Google Cloud Vertex
 
 
 ## 🚀 Future Roadmap
-
-- **🏢 Enterprise API**: Bulk message analysis for organizations
-- **📊 Threat Intelligence**: Community-driven scam pattern database
+- **Domain Validation**: Real-time WHOIS and reputation checks
+- **URL Expansion**: Resolves shortened links to reveal true destinations  
+- **🔗 Technical Validation**: WHOIS lookups, domain reputation checks
+- **📊 Threat Intelligence**: Populated with data sourced from government and official banking websites.
 - **🌐 More Languages**: Expand beyond current SEA language support
-
 
 ## 🙏 Acknowledgments
 - **AI Singapore** for the SEA-LION model and organizing the hackathon
