@@ -4,20 +4,20 @@
 [![Live Demo](https://img.shields.io/badge/Demo-Live-brightgreen)](https://huveewomg.github.io/trust-lens/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![SEA-LION](https://img.shields.io/badge/Model-SEA--LION%2027B-orange)](https://www.aisingapore.org/aiproducts/sea-lion/)
-[![GCP](https://img.shields.io/badge/Hosted%20on-Google%20Cloud-blue)](https://cloud.google.com)
+[![GCP](https://img.shields.io/badge/Hosted%20on-%20Railway-blue)](https://railway.com/)
 
 ## 🎬 Showcases
 
-**Scam Message in English**
+Scam Message in English
 ![English_Language](https://github.com/user-attachments/assets/678f1cdf-a235-420a-9485-65d7cd74b8d1)
 
-**Scam Message in Chinese**
+Scam Message in Chinese
 ![Chinese_Language](https://github.com/user-attachments/assets/9d339cab-9b71-439c-99d3-ac78689f611c)
 
-**Scam Message in Malay**
+Scam Message in Malay
 ![Malay_Language](https://github.com/user-attachments/assets/df28c456-9109-472b-a759-6eb23a80361d)
 
-**Scam Message in Thai**
+Scam Message in Thai
 ![Thai_Language](https://github.com/user-attachments/assets/84e7ee31-46d1-47fd-bffa-e118d7e2b9f2)
 
 ## 🚨 The Problem
