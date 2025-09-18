@@ -10,7 +10,7 @@ const EXAMPLES = [
   `重要通知：您的银行账户存在异常，为了避免冻结，请立即点击链接进行验证：https://tinyurl.com/bank-secure`,
   `We detected a login from a new device. Reply with your OTP code to re-activate your account immediately.`,
   `Malaysia Post: Sorry our driver missed you today as nobody answered. To book and reschedule, please verify the address in the link within 12 hours: https://pos-my.blog/mypost`,
-  `รับเงินฟรี 1000 บาท! เข้าร่วมกลุ่มการลงทุนของเราตอนนี้เพื่อผลตอบแทนสูง! ติดต่อเราที่: +66912345678`,
+  `รับเงินฟรี 1000 บาท! เข้าร่วมกลุ่มการลงทุนของเราตอนนี้เพื่อผลตอบแทนสูง! ติดต่อเราที่: +60163411403`,
   `Kesempatan kerja menarik! Butuh karyawan untuk pekerjaan online. Gaji tinggi, tidak perlu pengalaman. Daftar di sini: http://loker-cepat.net/`,
   `Your 2024 tax is overdue and you have violated the Malaysian Criminal Code. Please complete the payment within 24 hours: https://mybayarw.cyou/my`,
 ];
