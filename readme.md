@@ -6,6 +6,20 @@
 [![SEA-LION](https://img.shields.io/badge/Model-SEA--LION%2027B-orange)](https://www.aisingapore.org/aiproducts/sea-lion/)
 [![GCP](https://img.shields.io/badge/Hosted%20on-Google%20Cloud-blue)](https://cloud.google.com)
 
+## 🎬 Showcases
+
+Scam Message in English
+https://github.com/user-attachments/assets/4e8b15c4-aab7-4e57-9abb-117ca3f4aef1
+
+Scam Message in Chinese
+https://github.com/user-attachments/assets/3fe14f8b-3707-45aa-92d4-7ea39822f27f
+
+Scam Message in Malay
+https://github.com/user-attachments/assets/8db2fe60-a943-481e-b49e-12aec491e832
+
+Scam Message in Thai
+https://github.com/user-attachments/assets/5b8cca52-798a-4534-92b4-9bc30c8fc6d4
+
 ## 🚨 The Problem
 
 In Southeast Asia, digital users face a relentless barrage of **multilingual scam messages** across SMS, chat, and email platforms. These sophisticated attacks range from:
