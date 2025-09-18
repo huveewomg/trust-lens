@@ -23,7 +23,7 @@ In Southeast Asia, digital users face a relentless barrage of **multilingual sca
 
 ## 💡 Our Solution: Trust Lens
 
-Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid rule-based detection with advanced language understanding powered by **SEA-LION 9B**, specifically fine-tuned for Southeast Asian contexts.
+Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid rule-based detection with advanced language understanding powered by **SEA-LION v4 27B**, specifically fine-tuned for Southeast Asian contexts.
 
 ### 🎯 Key Features
 
@@ -41,17 +41,17 @@ Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid r
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   FastAPI        │    │  Google Cloud   │
-│   (HTML/CSS/JS) │───▶│   Backend        │───▶│  Vertex AI      │
-│                 │    │                  │    │  (SEA-LION 9B)  │
+│     Frontend    │    │     FastAPI      │    │   Google Cloud  │
+│  (HTML/CSS/JS)  │───>│     Backend      │───>│    Vertex AI    │
+│                 │    │    (Railway)     │    │(SEA-LION v4 27B)│
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
 **Tech Stack:**
 - **Backend**: FastAPI with Python 3.12
-- **AI Model**: SEA-LION 9B Instruct via Google Cloud Vertex AI
+- **AI Model**: SEA-LION v4 27B Model via Google Cloud Vertex AI
 - **Frontend**: Vanilla HTML/CSS/JavaScript
-- **Hosting**: Google Cloud Run
+- **Hosting**: Railway
 - **Region**: asia-southeast1 (Singapore)
 
 ### 🧪 How It Works
@@ -60,7 +60,7 @@ Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid r
 2. **SEA-LION Analysis**: Deep language understanding and context evaluation
 3. **Risk Assessment**: Generates numerical score (0-100) and confidence level
 4. **Explanation Generation**: Provides annotated text highlighting issues
-5. **Actionable Recommendations**: Suggests specific safety measures
+5. **Concise Summary**: Suggests the intent of the message
 
 ## 🌏 Southeast Asia Impact
 
@@ -129,7 +129,7 @@ docker run -p 8000:8000 \
 ## 🔬 Technical Deep Dive
 
 ### SEA-LION Model Implementation
-Our system uses the **SEA-LION 9B Instruct** model hosted on Google Cloud Vertex AI, specifically configured for:
+Our system uses the **SEA-LION v4 27B Instruct** model hosted on Google Cloud Vertex AI, specifically configured for:
 
 - **System Instructions**: Structured JSON output for consistent parsing
 - **Temperature**: 0.2 for reliable, deterministic analysis  
