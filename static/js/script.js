@@ -289,31 +289,15 @@ function populateSemakMule(result) {
   semakMuleContainer.innerHTML = ''; // Clear previous results
   
   if (!result || !result.table_data || result.table_data.length === 0) {
-    semakMuleContainer.innerHTML = '<div class="muted">No SemakMule data found for this phone number.</div>';
+    semakMuleContainer.innerHTML = 'No SemakMule data found for this phone number.';
     return;
   }
   
-  // Create results display
-  const resultDiv = document.createElement('div');
-  resultDiv.style.marginTop = '12px';
-  
   result.table_data.forEach(([phoneNumber, reportCount]) => {
     const phoneDiv = document.createElement('div');
-    phoneDiv.style.marginBottom = '8px';
     phoneDiv.innerHTML = `<strong>${phoneNumber}</strong> is reported <span style="color: var(--bad); font-weight: bold;">${reportCount} times</span>`;
-    resultDiv.appendChild(phoneDiv);
+    semakMuleContainer.appendChild(phoneDiv);
   });
-  
-  // Add summary if multiple phone numbers
-  if (result.table_data.length > 1) {
-    const summaryDiv = document.createElement('div');
-    summaryDiv.style.marginTop = '12px';
-    summaryDiv.style.padding = '8px';
-    summaryDiv.style.backgroundColor = 'var(--bg-muted)';
-    summaryDiv.style.borderRadius = '4px';
-    summaryDiv.innerHTML = `<small>Total phone numbers found: ${result.table_data.length}</small>`;
-    resultDiv.appendChild(summaryDiv);
-  }
   
   semakMuleContainer.appendChild(resultDiv);
 }
@@ -323,15 +307,11 @@ function renderSummary(summary) {
   summaryContainer.innerHTML = ''; // Clear previous results
 
   if (!summary || summary.length === 0) {
-    summaryContainer.innerHTML = '<div class="muted">No summary data found.</div>';
+    summaryContainer.innerHTML = 'No summary data found.';
     return;
   }
   // Create summary display
   const summaryDiv = document.createElement('div');
-  summaryDiv.style.marginTop = '12px';
-  summaryDiv.style.padding = '8px';
-  summaryDiv.style.backgroundColor = 'var(--bg-muted)';
-  summaryDiv.style.borderRadius = '4px';
-  summaryDiv.innerHTML = `<strong>Summary:</strong> ${summary}`;
+  summaryDiv.innerHTML = `${summary}`;
   summaryContainer.appendChild(summaryDiv);
 }
