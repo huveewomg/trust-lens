@@ -224,15 +224,15 @@ Analyze for scam indicators:
         raise HTTPException(status_code=500, detail=f"An error occurred while processing the AI response: {str(e)}")
 
 @router.post("/semakmule/")
-async def semak_mule(message: PhoneNumber):
+async def semak_mule(number: PhoneNumber):
     # Call the external SemakMule API
     try:
         api_url = "https://semakmule.rmp.gov.my/api/mule/get_search_data.php"
         payload = {
             "data": {
                 "category": "telefon",
-                "bankAccount": message.number,
-                "telNo": message.number,
+                "bankAccount": number.number,
+                "telNo": number.number,
                 "companyName": "",
                 "captcha": ""
             }
