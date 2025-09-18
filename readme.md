@@ -48,7 +48,6 @@ Trust Lens is a **web-based, multilingual fraud analyzer** that combines rapid r
 - **📊 Smart Scoring**: 0-100 risk score with confidence levels  
 - **🔍 Detailed Breakdown**: Highlights suspicious elements with explanations
 - **💡 Actionable Advice**: Provides clear safety recommendations
-- **🔗 Technical Validation**: WHOIS lookups, domain reputation checks
 - **🎯 Scam Categorization**: Identifies specific threat types
 
 ### 🛠️ Technical Architecture
@@ -151,8 +150,6 @@ Our system uses the **SEA-LION v4 27B Instruct** model hosted on Google Cloud Ve
 - **Token Optimization**: Efficient prompting for cost-effective operation
 
 ### Security Features
-- **Domain Validation**: Real-time WHOIS and reputation checks
-- **URL Expansion**: Resolves shortened links to reveal true destinations  
 - **Pattern Recognition**: Detects common social engineering tactics
 - **Confidence Scoring**: Provides reliability metrics for each assessment
 
@@ -162,7 +159,9 @@ Our system uses the **SEA-LION v4 27B Instruct** model hosted on Google Cloud Ve
 
 
 ## 🚀 Future Roadmap
-
+- **Domain Validation**: Real-time WHOIS and reputation checks
+- **URL Expansion**: Resolves shortened links to reveal true destinations  
+- **🔗 Technical Validation**: WHOIS lookups, domain reputation checks
 - **🏢 Enterprise API**: Bulk message analysis for organizations
 - **📊 Threat Intelligence**: Community-driven scam pattern database
 - **🌐 More Languages**: Expand beyond current SEA language support
