@@ -240,11 +240,12 @@ async def semak_mule(message: PhoneNumber):
         headers = {
             "Content-Type": "application/json",
         }
+        print(f"[SemakMule DEBUG] Sending request to SemakMule API with payload: {payload}")
         response = requests.post(api_url, json=payload, headers=headers, timeout=10)
         response.raise_for_status()
-        print(f"[DEBUG] SemakMule response: {response.json()}")
+        print(f"[SemakMule DEBUG] SemakMule response: {response.json()}")
         return response.json()
     except Exception as e:
-        print(f"An error occurred in semak_mule: {e}")
+        print(f"[SemakMule DEBUG] An error occurred in semak_mule: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred while calling SemakMule API: {str(e)}")
