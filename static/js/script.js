@@ -57,6 +57,10 @@ elements.clearButton.addEventListener('click', () => {
   // Clear SemakMule results
   const semakMuleContainer = document.getElementById('semakMuleResults');
   semakMuleContainer.innerHTML = 'SemakMule results will appear here…';
+
+  // Clear Summary results
+  const summaryContainer = document.getElementById('summaryResults');
+  summaryContainer.innerHTML = 'Summary results will appear here…';
 });
 
 // Analyze button event listener
@@ -73,8 +77,7 @@ elements.analyzeButton.addEventListener('click', async () => {
 
   try {
     // Extract phone numbers for SemakMule API
-    const phoneNumbers = extractPhoneNumbers(text);
-    console.log('Extracted Phone Numbers:', phoneNumbers);
+    const phoneNumber = extractPhoneNumber(text);
     
     // Create parallel API calls
     const apiCalls = [
@@ -88,15 +91,15 @@ elements.analyzeButton.addEventListener('click', async () => {
       }),
     ];
 
-    // Add SemakMule API call if phone numbers found
-    if (phoneNumbers.length > 0) {
+    // Add SemakMule API call if phone number found
+    if (phoneNumber !== null) {
       apiCalls.push(
         fetch(SEMAKMULE_API_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ number: phoneNumbers }),
+          body: JSON.stringify({ number: phoneNumber }),
         })
       );
     }
@@ -128,7 +131,7 @@ elements.analyzeButton.addEventListener('click', async () => {
     } else {
       // No phone numbers found, show appropriate message
       const semakMuleContainer = document.getElementById('semakMuleResults');
-      semakMuleContainer.innerHTML = '<div class="muted">No phone numbers detected in the message.</div>';
+      semakMuleContainer.innerHTML = 'No phone numbers detected in the message.';
     }
 
     updateStatus('Analysis complete.');
@@ -158,7 +161,7 @@ function wait(milliseconds) {
 }
 
 // Extract phone numbers from text
-function extractPhoneNumbers(text) {
+function extractPhoneNumber(text) {
   // Find all potential phone numbers that start with +, 6, or 0
   const potentialNumbers = text.match(/[+60]\d+/g) || [];
   const validNumbers = [];
@@ -182,7 +185,6 @@ function extractPhoneNumbers(text) {
   if (validNumbers.length > 0) {
     return validNumbers[0]; // Return the first valid number found
   } else {
-    semakMuleContainer.innerHTML = 'No phone numbers detected in the message.';
     return null;
   }
 }
