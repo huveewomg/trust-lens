@@ -43,9 +43,8 @@ JSON Schema:
 - A message is 'dangerous' if it contains strong indicators of a scam (e.g., a direct request for money, a password reset link to a suspicious domain, or a clear threat). The score should be high, from 31-100.
 
 CRITICAL LANGUAGE INSTRUCTION:
-- Respond with findings (the 'label' and 'why' fields) in the exact language of the input message (not country).
-- JSON structure and keys remain in English, but content follows input language
-- Be concise and direct in your analysis
+- JSON structure and keys MUST be strictly followed.
+- Respond with findings (the 'label' and 'why' fields) in the exact language of the input message (not country, region, company name).
 """
 
 def predict_custom_trained_model_sample(
@@ -225,15 +224,16 @@ Analyze for scam indicators:
         raise HTTPException(status_code=500, detail=f"An error occurred while processing the AI response: {str(e)}")
 
 @router.post("/semakmule/")
-async def semak_mule(message: PhoneNumber):
+async def semak_mule(number: PhoneNumber):
+    print(f"[SemakMule DEBUG] Received phone number: {number.number}")
     # Call the external SemakMule API
     try:
         api_url = "https://semakmule.rmp.gov.my/api/mule/get_search_data.php"
         payload = {
             "data": {
                 "category": "telefon",
-                "bankAccount": message,
-                "telNo": message,
+                "bankAccount": number.number,
+                "telNo": number.number,
                 "companyName": "",
                 "captcha": ""
             }
@@ -241,10 +241,12 @@ async def semak_mule(message: PhoneNumber):
         headers = {
             "Content-Type": "application/json",
         }
-        response = requests.post(api_url, json=payload, headers=headers, timeout=10)
+        print(f"[SemakMule DEBUG] Sending request to SemakMule API with payload: {payload}")
+        response = requests.post(api_url, json=payload, headers=headers, timeout=10, verify=False)
         response.raise_for_status()
+        print(f"[SemakMule DEBUG] SemakMule response: {response.json()}")
         return response.json()
     except Exception as e:
-        print(f"An error occurred in semak_mule: {e}")
+        print(f"[SemakMule DEBUG] An error occurred in semak_mule: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred while calling SemakMule API: {str(e)}")
