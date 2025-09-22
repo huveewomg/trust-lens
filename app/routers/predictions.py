@@ -86,7 +86,7 @@ def predict_custom_trained_model_sample(
     print(f"[VertexAI DEBUG] Payload: {json.dumps(payload, indent=2)}")
     
     # Make the HTTP request
-    response = requests.post(dedicated_endpoint_url, headers=headers, json=payload, timeout=30)
+    response = requests.post(dedicated_endpoint_url, headers=headers, json=payload, timeout=60)
     
     print(f"[VertexAI DEBUG] Response status: {response.status_code}")
     print(f"[VertexAI DEBUG] Response headers: {dict(response.headers)}")
